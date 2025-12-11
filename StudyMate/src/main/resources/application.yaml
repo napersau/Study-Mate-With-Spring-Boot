@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: kingdomLegends
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+    properties:
+      hibernate:
+        enable_lazy_load_no_trans: true
+        format_sql: true
+  # Spring mail
+  mail:
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: 587
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          transport:
+            protocol: smtp
+  # Config Google account
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:}
+            client-secret: ${GOOGLE_CLIENT_SECRET:}
+
+# Server configuration
+server:
+  port: ${SERVER_PORT:8080}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+# VNPay
+vnpay:
+  tmn-code: ${VNPAY_TMN_CODE:}
+  hash-secret: ${VNPAY_HASH_SECRET:}
+  vnp-url: ${VNPAY_VNP_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+  vnp-return-url: http://localhost:3000/payment-success
+  vnp-apiurl: https://sandbox.vnpayment.vn/merchant_webapi/api/transaction
+
+jwt:
+  signerKey: ${JWT_SIGNER_KEY:}
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY:}
+    url: ${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models}
