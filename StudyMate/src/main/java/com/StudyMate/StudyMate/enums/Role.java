@@ -1,4 +1,4 @@
-package com.example.kingdomLegends.enums;
+package com.StudyMate.StudyMate.enums;
 
 public enum Role {
     ADMIN,

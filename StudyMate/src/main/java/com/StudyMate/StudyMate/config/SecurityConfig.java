@@ -1,11 +1,11 @@
 package com.StudyMate.StudyMate.config;
 
-import com.example.kingdomLegends.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
+//@EnableMethodSecurity
 public class SecurityConfig {
 
 
@@ -35,71 +37,32 @@ public class SecurityConfig {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/users","/auth/**", "/login/**","/users/**"};
+    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/users","/api/v1/auth/**","/api/v1/users/**", "/api/v1/email/**"
+    ,"/oauth2/**","/login/oauth2/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.authorizeHttpRequests(request ->
-                        request.requestMatchers(HttpMethod.POST,PUBLIC_ENDPOINTS).permitAll()
+        httpSecurity
+                .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(request ->
+                        request
+                                // Public endpoints - ĐẶT TRƯỚC, cụ thể hơn
+                                .requestMatchers(HttpMethod.POST, "/api/v1/users").permitAll()  // Đăng ký
+                                .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()  // Login
+                                .requestMatchers(HttpMethod.PUT, "/api/v1/email/**").permitAll()  // Reset password
+                                .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()  // OAuth
 
-                                .requestMatchers(HttpMethod.PUT,PUBLIC_ENDPOINTS).permitAll()
-
-                                .requestMatchers(
-                                        "/v3/api-docs/**",
-                                        "/swagger-ui.html",
-                                        "/swagger-ui/**"
-                                ).permitAll()
-                                .requestMatchers(HttpMethod.GET, "/products/client").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/products/client/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/products/product-list").permitAll()
-
-                                .requestMatchers(HttpMethod.GET, "/payment/**").permitAll()
-
-
-                                // Cart
-                                .requestMatchers(HttpMethod.GET, "/cart").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.DELETE, "/cart").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                //Cart-details
-                                .requestMatchers(HttpMethod.POST, "/cart-detail").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.DELETE, "/cart-detail/{id}").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.GET, "/cart-detail").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                //Order
-                                .requestMatchers(HttpMethod.POST, "/order").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.POST, "/order/{id}").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.PUT, "/order").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/order", "/order/filter").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.GET, "/order/manager", "/order/manager/filter").hasRole(Role.ADMIN.name())
-                                //Order-Details
-                                .requestMatchers(HttpMethod.GET, "/order-details").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                //Product
-                                .requestMatchers(HttpMethod.POST, "/products").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/products").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.PUT, "/products/{productId}").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, "/products/{productId}").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/products/{productId}").hasRole(Role.ADMIN.name())
-
-
-                                //User
-                                .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
-                                .requestMatchers(HttpMethod.GET, "/users/my-info").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.PUT, "/users/{userId}").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                                .requestMatchers(HttpMethod.PUT, "/users/password/{userId}").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-
-                                //Email
-                                .requestMatchers( "/email", "email/**").permitAll()
-                                .requestMatchers( "/api/chatbot", "/api/chatbot/**").permitAll()
-
-
+                                // Protected endpoints - ĐẶT SAU
+                                .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")  // Get all users
+                                .requestMatchers(HttpMethod.POST, "/api/v1/users/update/{userId}").hasRole("ADMIN")  // Update user
+                                .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
 
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
                             response.sendRedirect("http://localhost:3000/auth/signingoogle");
                         })
-
                 );
-
 
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
