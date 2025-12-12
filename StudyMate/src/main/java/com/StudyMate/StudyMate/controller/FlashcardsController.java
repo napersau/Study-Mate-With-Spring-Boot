@@ -5,10 +5,9 @@ import com.StudyMate.StudyMate.dto.response.ApiResponse;
 import com.StudyMate.StudyMate.dto.response.FlashcardsResponse;
 import com.StudyMate.StudyMate.service.FlashcardsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/flashcards")
@@ -23,6 +22,20 @@ public class FlashcardsController {
         return ApiResponse.<FlashcardsResponse>builder()
                 .code(1000)
                 .result(response)
+                .build();
+    }
+
+    @GetMapping("/all")
+    ApiResponse<List<FlashcardsResponse>> getAllFlashcards(){
+        return ApiResponse.<List<FlashcardsResponse>>builder()
+                .result(flashcardsService.getAllFlashcards())
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    ApiResponse<FlashcardsResponse> getFlashcardsById(@PathVariable("id") Long id){
+        return ApiResponse.<FlashcardsResponse>builder()
+                .result(flashcardsService.getFlashcardsById(id))
                 .build();
     }
 }

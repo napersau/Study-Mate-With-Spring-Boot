@@ -56,6 +56,8 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")  // Get all users
                                 .requestMatchers(HttpMethod.POST, "/api/v1/users/update/{userId}").hasRole("ADMIN")  // Update user
                                 .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
+                                // Flashcards
+                                .requestMatchers("/api/v1/flashcards/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
 
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2

@@ -6,4 +6,5 @@ import lombok.Data;
 public class MediaRequest {
     private String url;
     private String type;
+    private Long sourceId;
 }

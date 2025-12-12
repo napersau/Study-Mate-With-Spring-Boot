@@ -31,8 +31,7 @@ public class Flashcards {
     @Column(name = "example")
     private String example;
 
-    // Chứa ảnh, audio, video liên quan đến flashcard
-    @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Media> mediaList;
-
+    @ManyToOne
+    @JoinColumn(name = "deck_id")
+    private Decks deck;
 }

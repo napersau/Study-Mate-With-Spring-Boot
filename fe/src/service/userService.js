@@ -122,13 +122,14 @@ export const uploadAvatar = async (formData) => {
 /**
  * Toggle user active status
  * @param {string} userId - User ID
+ * @param {boolean} isActive - New active status
  * @returns {Promise} Response
  */
-export const toggleActiveUser = async (userId) => {
+export const toggleActiveUser = async (userId, isActive) => {
   try {
-    const response = await httpClient.post(
-      `${API.TOGGLE_ACTIVE_USER}/${userId}`,
-      null,
+    const response = await httpClient.put(
+      API.TOGGLE_ACTIVE_USER,
+      { id: userId, active: isActive },
       {
         headers: {
           Authorization: `Bearer ${getToken()}`,

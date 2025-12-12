@@ -2,7 +2,9 @@ import Home from "../pages/home";
 import Login from "../pages/login";
 import Layout from "../layout";
 import PrivateRoutes from "../components/PrivateRoutes";
+import PrivateRoutesAdmin from "../components/privateRoutesAdmin";
 import Register from "../pages/register";
+import AdminHome from "../pages/adminHome";
 
 const Routes = [
   {
@@ -31,13 +33,13 @@ const Routes = [
         ],
       },
 
-      // Admin-only routes (uncomment when admin pages are ready)
-      // {
-      //   element: <PrivateRoutesAdmin />,
-      //   children: [
-      //     { path: "admin", element: <AdminHome /> },
-      //   ],
-      // },
+      // Admin-only routes
+      {
+        element: <PrivateRoutesAdmin />,
+        children: [
+          { path: "admin", element: <AdminHome /> },
+        ],
+      },
     ],
   },
 ];

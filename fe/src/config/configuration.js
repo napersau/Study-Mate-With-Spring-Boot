@@ -30,4 +30,7 @@ export const API = {
   VERIFY_OTP: "/email/verify-otp",
   RESET_PASSWORD: "/email/reset-password",
   
+  // Flashcards
+  FLASHCARDS: "/flashcards",
+  
 };
