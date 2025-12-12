@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     userInfo,
     isLoggedIn: userInfo !== null,
-    isAdmin: userInfo?.role === 'ADMIN',
+    isAdmin: userInfo?.role.name === 'ADMIN',
     updateUserInfo
   };
 

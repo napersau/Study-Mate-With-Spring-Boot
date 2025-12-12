@@ -10,7 +10,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const { userInfo, isLoggedIn, isAdmin } = useAuth();
   const navigate = useNavigate();
-  
+
   const userName = userInfo?.username || "Người dùng";
 
   const handleLogout = () => {
@@ -45,11 +45,14 @@ const Header = () => {
             <Link to="/courses" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
               Khóa học
             </Link>
-            <Link to="/about" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
-              Giới thiệu
+            <Link to="/exams" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
+              Đề thi
             </Link>
-            <Link to="/contact" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
-              Liên hệ
+            <Link to="/documents" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
+              Tài liệu
+            </Link>
+            <Link to="/flashcards" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
+              Flashcards
             </Link>
           </div>
 
@@ -167,11 +170,14 @@ const Header = () => {
               <Link to="/courses" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
                 Khóa học
               </Link>
-              <Link to="/about" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
-                Giới thiệu
+              <Link to="/exams" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
+                Đề thi
               </Link>
-              <Link to="/contact" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
-                Liên hệ
+              <Link to="/documents" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
+                Tài liệu
+              </Link>
+              <Link to="/flashcards" className="text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors">
+                Flashcards
               </Link>
 
               <hr className="my-2 dark:border-gray-600" />
