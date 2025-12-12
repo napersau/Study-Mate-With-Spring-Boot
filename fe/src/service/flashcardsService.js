@@ -1,5 +1,6 @@
 import httpClient from "../config/httpClient";
 import { API } from "../config/configuration";
+import { getToken } from "./localStorageService";
 
 /**
  * Create new flashcard
@@ -8,7 +9,11 @@ import { API } from "../config/configuration";
  */
 export const createFlashcard = async (flashcardsData) => {
   try {
-    const response = await httpClient.post(API.FLASHCARDS, flashcardsData);
+    const response = await httpClient.post(API.FLASHCARDS, flashcardsData, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error creating flashcard:", error);
@@ -22,7 +27,11 @@ export const createFlashcard = async (flashcardsData) => {
  */
 export const getAllFlashcards = async () => {
   try {
-    const response = await httpClient.get(API.FLASHCARDS);
+    const response = await httpClient.get(`${API.FLASHCARDS}/all`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error fetching flashcards:", error);
@@ -38,7 +47,11 @@ export const getAllFlashcards = async () => {
  */
 export const updateFlashcard = async (id, flashcardsData) => {
   try {
-    const response = await httpClient.put(`${API.FLASHCARDS}/${id}`, flashcardsData);
+    const response = await httpClient.put(`${API.FLASHCARDS}/${id}`, flashcardsData, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error updating flashcard:", error);
@@ -53,7 +66,11 @@ export const updateFlashcard = async (id, flashcardsData) => {
  */
 export const deleteFlashcard = async (id) => {
   try {
-    const response = await httpClient.delete(`${API.FLASHCARDS}/${id}`);
+    const response = await httpClient.delete(`${API.FLASHCARDS}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error deleting flashcard:", error);

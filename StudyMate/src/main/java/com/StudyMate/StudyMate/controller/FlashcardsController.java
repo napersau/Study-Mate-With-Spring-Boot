@@ -27,14 +27,17 @@ public class FlashcardsController {
 
     @GetMapping("/all")
     ApiResponse<List<FlashcardsResponse>> getAllFlashcards(){
+        List<FlashcardsResponse> responses = flashcardsService.getAllFlashcards();
         return ApiResponse.<List<FlashcardsResponse>>builder()
-                .result(flashcardsService.getAllFlashcards())
+                .code(1000)
+                .result(responses)
                 .build();
     }
 
     @GetMapping("/{id}")
     ApiResponse<FlashcardsResponse> getFlashcardsById(@PathVariable("id") Long id){
         return ApiResponse.<FlashcardsResponse>builder()
+                .code(1000)
                 .result(flashcardsService.getFlashcardsById(id))
                 .build();
     }

@@ -1,81 +1,20 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { register } from '../../service/authenticationService';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import useRegisterHook from './useRegisterHook';
 
 const Register = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    confirmPassword: '',
-    fullName: '',
-    phoneNumber: '',
-    email: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess(false);
-
-    // Validate username length
-    if (formData.username.length < 3) {
-      setError('Tên đăng nhập phải có ít nhất 3 ký tự!');
-      return;
-    }
-
-    // Validate password match
-    if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu không khớp!');
-      return;
-    }
-
-    // Validate password length
-    if (formData.password.length < 6) {
-      setError('Mật khẩu phải có ít nhất 6 ký tự!');
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const userData = {
-        username: formData.username,
-        password: formData.password,
-        fullName: formData.fullName,
-        phoneNumber: formData.phoneNumber,
-        email: formData.email
-      };
-
-      const response = await register(userData);
-      
-      if (response.code === 1000) {
-        // Registration successful
-        setSuccess(true);
-        setTimeout(() => {
-          navigate('/login');
-        }, 2000);
-      } else {
-        setError(response.message || 'Đăng ký thất bại');
-      }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Có lỗi xảy ra khi đăng ký');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    formData,
+    showPassword,
+    showConfirmPassword,
+    error,
+    success,
+    loading,
+    handleChange,
+    handleSubmit,
+    togglePassword,
+    toggleConfirmPassword
+  } = useRegisterHook();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-primary-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4 py-12 transition-colors duration-300">
@@ -186,7 +125,7 @@ const Register = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={togglePassword}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showPassword ? (
@@ -226,7 +165,7 @@ const Register = () => {
                 />
                 <button
                   type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onClick={toggleConfirmPassword}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
                   {showConfirmPassword ? (
