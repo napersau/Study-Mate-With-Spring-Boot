@@ -41,4 +41,12 @@ public class FlashcardsController {
                 .result(flashcardsService.getFlashcardsById(id))
                 .build();
     }
+
+    @PutMapping("/{id}")
+    ApiResponse<FlashcardsResponse> updateFlashcardsById(@PathVariable("id") Long id, @RequestBody FlashcardsRequest flashcardsRequest){
+        return ApiResponse.<FlashcardsResponse>builder()
+                .code(1000)
+                .result(flashcardsService.updateFlashcards(id, flashcardsRequest))
+                .build();
+    }
 }

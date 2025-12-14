@@ -65,4 +65,17 @@ public class FlashcardsServiceImpl implements FlashcardsService {
         Flashcards flashcards = flashcardsRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FLASHCARDS_NOT_FOUND));
         return modelMapper.map(flashcards, FlashcardsResponse.class);
     }
+
+    @Override
+    public FlashcardsResponse updateFlashcards(Long id, FlashcardsRequest flashcardsRequest) {
+
+        Flashcards flashcards = flashcardsRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.FLASHCARDS_NOT_FOUND));
+        flashcards.setTerm(flashcardsRequest.getTerm());
+        flashcards.setDefinition(flashcardsRequest.getDefinition());
+        flashcards.setPronunciation(flashcardsRequest.getPronunciation());
+        flashcards.setExample(flashcardsRequest.getExample());
+        flashcardsRepository.save(flashcards);
+
+        return modelMapper.map(flashcards, FlashcardsResponse.class);
+    }
 }

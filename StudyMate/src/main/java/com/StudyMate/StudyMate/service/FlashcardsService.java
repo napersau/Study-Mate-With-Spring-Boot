@@ -9,4 +9,5 @@ public interface FlashcardsService {
     FlashcardsResponse createFlashcards(FlashcardsRequest flashcardsRequest);
     List<FlashcardsResponse> getAllFlashcards();
     FlashcardsResponse getFlashcardsById(Long id);
+    FlashcardsResponse updateFlashcards(Long id,FlashcardsRequest flashcardsRequest);
 }
