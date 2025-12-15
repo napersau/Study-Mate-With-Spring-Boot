@@ -51,4 +51,17 @@ public class DecksServiceImpl implements DecksService {
         return decksList.stream()
                 .map(decks -> modelMapper.map(decks, DecksResponse.class)).toList();
     }
+
+    @Override
+    public DecksResponse getDeckById(Long id) {
+
+        Decks decks = decksRepository.findById(id).orElse(null);
+        if (decks != null) {
+            return modelMapper.map(decks, DecksResponse.class);
+        }
+
+        return modelMapper.map(decks, DecksResponse.class);
+    }
+
+
 }

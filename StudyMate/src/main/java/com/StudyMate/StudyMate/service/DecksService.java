@@ -10,4 +10,5 @@ import java.util.List;
 public interface DecksService {
     DecksResponse createDecks(List<FlashcardsRequest> flashcardsRequests, DecksRequest decksRequest);
     List<DecksResponse> getAllDecks();
+    DecksResponse getDeckById(Long id);
 }

@@ -37,4 +37,13 @@ public class DecksController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    ApiResponse<DecksResponse> getDeckById(@PathVariable Long id){
+        DecksResponse response = decksService.getDeckById(id);
+        return ApiResponse.<DecksResponse>builder()
+                .code(1000)
+                .result(response)
+                .build();
+    }
+
 }
