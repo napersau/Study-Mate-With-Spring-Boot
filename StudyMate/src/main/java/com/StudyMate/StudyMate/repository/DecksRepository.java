@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DecksRepository extends JpaRepository<Decks, Long> {
+    Decks findDeckByTitle(String title);
 }

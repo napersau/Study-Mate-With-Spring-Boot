@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,16 +17,16 @@ public class Flashcards {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "term")
+    @Column(name = "term", unique = true)
     private String term;
 
-    @Column(name = "definition")
+    @Column(name = "definition", columnDefinition = "TEXT") // Thay đổi này
     private String definition;
 
     @Column(name = "pronunciation")
     private String pronunciation;
 
-    @Column(name = "example")
+    @Column(name = "example", columnDefinition = "TEXT") // Có thể cần thiết cho example
     private String example;
 
     @ManyToOne
