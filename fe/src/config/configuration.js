@@ -33,4 +33,9 @@ export const API = {
   // Flashcards
   FLASHCARDS: "/flashcards",
   
+  // Decks
+  DECKS: "/decks",
+  GET_ALL_DECKS: "/decks/all",
+  GET_DECK: (id) => `/decks/${id}`,
+  
 };

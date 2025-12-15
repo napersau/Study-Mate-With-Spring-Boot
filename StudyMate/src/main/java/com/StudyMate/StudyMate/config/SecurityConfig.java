@@ -58,6 +58,8 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
                                 // Flashcards
                                 .requestMatchers("/api/v1/flashcards/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
+                                .requestMatchers("/api/v1/decks/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
+                                .requestMatchers("/api/v1/flashcards-progress/**").hasAnyRole("USER", "ADMIN")  // Other user endpoints
 
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2

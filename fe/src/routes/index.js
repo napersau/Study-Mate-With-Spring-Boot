@@ -5,6 +5,8 @@ import PrivateRoutes from "../components/PrivateRoutes";
 import PrivateRoutesAdmin from "../components/privateRoutesAdmin";
 import Register from "../pages/register";
 import AdminHome from "../pages/adminHome";
+import Flashcards from "../pages/flashcards";
+import DeckDetail from "../pages/deckDetail";
 
 const Routes = [
   {
@@ -30,6 +32,8 @@ const Routes = [
         element: <PrivateRoutes />,
         children: [
           { path: "home", element: <Home /> },
+          { path: "flashcards", element: <Flashcards /> },
+          { path: "decks/:id", element: <DeckDetail /> },
         ],
       },
 
