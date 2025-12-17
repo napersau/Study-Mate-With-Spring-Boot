@@ -17,5 +17,4 @@ public class DecksResponse {
     private Instant createdAt;
     private Instant updatedAt;
     private List<FlashcardsResponse> flashcardsList;
-    private List<MediaResponse> mediaList;
 }
