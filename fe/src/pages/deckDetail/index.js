@@ -11,11 +11,13 @@ const DeckDetail = () => {
   const flashcards = deck?.flashcardsList || [];
   const current = flashcards[index] || null;
 
+  console.log("flashcards", flashcards);
+
   const audioUrl = useMemo(() => {
-    const list = deck?.mediaList || [];
+    const list = current?.mediaList || [];
     const audioItem = list.find(m => (m?.type || m?.mediaType)?.toString().toUpperCase() === 'AUDIO');
     return audioItem?.url || audioItem?.mediaUrl || null;
-  }, [deck]);
+  }, [current]);
 
   const playAudio = () => {
     if (!audioUrl) return;

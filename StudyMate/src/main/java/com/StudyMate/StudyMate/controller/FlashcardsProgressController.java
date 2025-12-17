@@ -1,6 +1,7 @@
 package com.StudyMate.StudyMate.controller;
 
 
+import com.StudyMate.StudyMate.dto.request.FlashcardsProgressRequest;
 import com.StudyMate.StudyMate.dto.response.ApiResponse;
 import com.StudyMate.StudyMate.dto.response.FlashcardsProgressResponse;
 import com.StudyMate.StudyMate.entity.FlashcardsProgress;
@@ -26,19 +27,11 @@ public class FlashcardsProgressController {
                 .build();
     }
 
-    @PostMapping("/{flashcardsId}")
-    ApiResponse<FlashcardsProgressResponse> createFlashcardsProgress(@PathVariable("flashcardsId") Long flashcardsId){
-        FlashcardsProgressResponse response = flashcardsProgressService.createFlashcardsProgress(flashcardsId);
-        return ApiResponse.<FlashcardsProgressResponse>builder()
-                .code(1000)
-                .result(response)
-                .build();
-    }
 
     @PutMapping("/{flashcardId}")
     ApiResponse<FlashcardsProgressResponse> updateFlashcardsProgress(@PathVariable("flashcardsId") Long flashcardsId,
-                                                                     @RequestBody FlashcardsProgress flashcardsProgress){
-        FlashcardsProgressResponse response = flashcardsProgressService.updateFlashcardsProgress(flashcardsId, flashcardsProgress);
+                                                                     @RequestBody FlashcardsProgressRequest flashcardsProgressRequest){
+        FlashcardsProgressResponse response = flashcardsProgressService.updateFlashcardsProgress(flashcardsId, flashcardsProgressRequest);
         return ApiResponse.<FlashcardsProgressResponse>builder()
                 .code(1000)
                 .result(response)

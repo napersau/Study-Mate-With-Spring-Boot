@@ -1,10 +1,12 @@
 package com.StudyMate.StudyMate.service.impl;
 
 
+import com.StudyMate.StudyMate.dto.request.FlashcardsProgressRequest;
 import com.StudyMate.StudyMate.dto.response.FlashcardsProgressResponse;
 import com.StudyMate.StudyMate.entity.Flashcards;
 import com.StudyMate.StudyMate.entity.FlashcardsProgress;
 import com.StudyMate.StudyMate.entity.User;
+import com.StudyMate.StudyMate.enums.FlashcardStatus;
 import com.StudyMate.StudyMate.exception.AppException;
 import com.StudyMate.StudyMate.exception.ErrorCode;
 import com.StudyMate.StudyMate.repository.FlashcardsProgressRepository;
@@ -16,6 +18,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -39,30 +43,61 @@ public class FlashcardsProgressServiceImpl implements FlashcardsProgressService 
                 .toList();
     }
 
+
     @Override
-    public FlashcardsProgressResponse createFlashcardsProgress(Long flashcardId) {
+    public FlashcardsProgressResponse updateFlashcardsProgress(
+            Long flashcardsId,
+            FlashcardsProgressRequest request) {
 
         User user = securityUtil.getCurrentUser();
-        Flashcards flashcards = flashcardsRepository.findById(flashcardId)
-                .orElseThrow(() -> new AppException(ErrorCode.FLASHCARDS_NOT_FOUND));
-        FlashcardsProgress flashcardsProgress = FlashcardsProgress.builder()
-                .flashcard(flashcards)
-                .user(user)
-                .build();
 
-        return modelMapper.map(flashcardsProgressRepository.save(flashcardsProgress), FlashcardsProgressResponse.class);
+        FlashcardsProgress progress =
+                flashcardsProgressRepository
+                        .findByUserIdAndFlashcardId(user.getId(), flashcardsId)
+                        .orElseGet(() -> createNewProgress(user, flashcardsId));
+
+        int box = progress.getBoxNumber() == null ? 1 : progress.getBoxNumber();
+
+        switch (request.getJudge()) {
+
+            case "hard" -> {
+                progress.setBoxNumber(1);
+                progress.setNextReviewAt(Instant.now().plus(1, ChronoUnit.DAYS));
+                progress.setStatus(FlashcardStatus.LEARNING.name());
+            }
+
+            case "medium" -> {
+                progress.setBoxNumber(Math.min(box + 1, 10));
+                progress.setNextReviewAt(Instant.now().plus(3, ChronoUnit.DAYS));
+                progress.setStatus(FlashcardStatus.LEARNING.name());
+            }
+
+            case "easy" -> {
+                progress.setBoxNumber(Math.min(box + 2, 10));
+                progress.setNextReviewAt(Instant.now().plus(7, ChronoUnit.DAYS));
+                progress.setStatus(FlashcardStatus.REVIEW.name());
+            }
+
+            case "know" -> {
+                progress.setBoxNumber(10);
+                progress.setNextReviewAt(Instant.now().plus(30, ChronoUnit.DAYS));
+                progress.setStatus(FlashcardStatus.SUSPENDED.name());
+            }
+        }
+
+        progress.setLastReviewedAt(Instant.now());
+        flashcardsProgressRepository.save(progress);
+
+        return modelMapper.map(progress, FlashcardsProgressResponse.class);
     }
 
-    @Override
-    public FlashcardsProgressResponse updateFlashcardsProgress(Long id, FlashcardsProgress flashcardsProgress) {
-        FlashcardsProgress flashcardsProgressResponse = flashcardsProgressRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Flashcard not found"));
-        flashcardsProgress.setBoxNumber(flashcardsProgressResponse.getBoxNumber());
-        flashcardsProgress.setStatus(flashcardsProgressResponse.getStatus());
-        flashcardsProgress.setNextReviewAt(flashcardsProgressResponse.getNextReviewAt());
-        flashcardsProgress.setLastReviewedAt(flashcardsProgressResponse.getLastReviewedAt());
-        flashcardsProgressRepository.save(flashcardsProgress);
 
-        return modelMapper.map(flashcardsProgress, FlashcardsProgressResponse.class);
+    private FlashcardsProgress createNewProgress(User user, Long flashcardId) {
+        return FlashcardsProgress.builder()
+                .user(user)
+                .flashcard(flashcardsRepository.getReferenceById(flashcardId))
+                .boxNumber(1)
+                .status(FlashcardStatus.NEW.name())
+                .build();
     }
 }

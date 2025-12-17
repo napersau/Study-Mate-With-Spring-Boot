@@ -14,5 +14,6 @@ public class FlashcardsProgressRequest {
     private String status;
     private Integer boxNumber;
     private UserRequest user;
-    private FlashcardsRequest flashcard;
+    private String judge;
+    private int flashcardsId;
 }
