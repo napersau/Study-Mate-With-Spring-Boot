@@ -34,6 +34,30 @@
   .animate-slide-up {
     animation: slideUp 0.5s ease-out;
   }
+
+  /* 3D Flip Animation for Flashcards */
+  .flip-card {
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+  }
+
+  .flip-card-inner.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+
+  .flip-card-back {
+    transform: rotateY(180deg);
+  }
 }
 
 @keyframes fadeIn {
