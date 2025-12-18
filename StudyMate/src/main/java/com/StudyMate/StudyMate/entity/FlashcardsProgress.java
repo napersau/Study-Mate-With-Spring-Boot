@@ -40,8 +40,8 @@ public class FlashcardsProgress {
     @Column(name = "interval_factor")
     private Integer repetitions;        // successive correct reps
 
-    @Column(name = "interval")
-    private Integer interval;           // days until next review
+    @Column(name = "interval_days")
+    private Integer intervalDays;        // days until next review
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

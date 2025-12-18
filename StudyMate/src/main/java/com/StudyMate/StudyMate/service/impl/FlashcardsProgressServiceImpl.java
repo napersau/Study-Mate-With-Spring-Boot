@@ -92,7 +92,7 @@ public class FlashcardsProgressServiceImpl implements FlashcardsProgressService 
 
         double EF = p.getEasinessFactor() == null ? 2.5 : p.getEasinessFactor();
         int repetitions = p.getRepetitions() == null ? 0 : p.getRepetitions();
-        int interval = p.getInterval() == null ? 0 : p.getInterval();
+        int interval = p.getIntervalDays() == null ? 0 : p.getIntervalDays();
 
         // ------------------------------------------------
         // Update Easiness Factor
@@ -106,7 +106,7 @@ public class FlashcardsProgressServiceImpl implements FlashcardsProgressService 
         // ------------------------------------------------
         if (q < 3) {
             p.setRepetitions(0);
-            p.setInterval(1);
+            p.setIntervalDays(1);
         } else {
 
             if (repetitions == 0) {
@@ -119,7 +119,7 @@ public class FlashcardsProgressServiceImpl implements FlashcardsProgressService 
 
             repetitions++;
             p.setRepetitions(repetitions);
-            p.setInterval(interval);
+            p.setIntervalDays(interval);
         }
 
         // next review date

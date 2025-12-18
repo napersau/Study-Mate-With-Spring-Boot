@@ -1,12 +1,15 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useDeckDetail from './useDeckDetail';
+import flashcardsProgressService from '../../service/flashcardsProgressService';
 
 const DeckDetail = () => {
   const { id } = useParams();
   const { deck, loading, error, refresh } = useDeckDetail(id);
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const flashcards = deck?.flashcardsList || [];
   const current = flashcards[index] || null;
@@ -25,13 +28,47 @@ const DeckDetail = () => {
     audio.play().catch(() => {});
   };
 
+  const handleJudge = async (judge) => {
+    if (!current || updating) return;
+    
+    console.log("Current flashcard:", current);
+    console.log("Flashcard ID:", current.id);
+    
+    setUpdating(true);
+    try {
+      await flashcardsProgressService.updateFlashcardsProgress(current.id, judge);
+      console.log(current.id)
+      // Hiển thị thông báo thành công
+      const messages = {
+        'again': '🔄 Sẽ xem lại sớm!',
+        'hard': '💪 Hơi nhớ! Tiếp tục cố gắng',
+        'good': '👍 Nhớ tốt! Làm tốt lắm',
+        'easy': '🎉 Nhớ rất tốt! Xuất sắc'
+      };
+      setSuccessMessage(messages[judge] || 'Đã cập nhật!');
+      setTimeout(() => setSuccessMessage(''), 2000);
+      
+      // Tự động chuyển sang thẻ tiếp theo
+      setTimeout(() => {
+        next();
+      }, 500);
+    } catch (error) {
+      console.error('Error updating progress:', error);
+      alert('Có lỗi xảy ra khi cập nhật. Vui lòng thử lại!');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const next = () => {
     setFlipped(false);
+    setSuccessMessage('');
     setIndex((prev) => (prev + 1 < flashcards.length ? prev + 1 : prev));
   };
 
   const prev = () => {
     setFlipped(false);
+    setSuccessMessage('');
     setIndex((prev) => (prev - 1 >= 0 ? prev - 1 : prev));
   };
 
@@ -60,6 +97,15 @@ const DeckDetail = () => {
             <button onClick={refresh} className="px-4 py-2 text-sm font-medium rounded-lg bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700 text-white shadow-lg transition-all">🔄 Làm mới</button>
           </div>
         </div>
+
+        {successMessage && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-l-4 border-green-500 text-green-700 dark:text-green-400 rounded-xl shadow-md animate-fade-in">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
+              <span className="font-medium">{successMessage}</span>
+            </div>
+          </div>
+        )}
 
         {error && (
           <div className="mb-6 p-5 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 border-l-4 border-red-500 text-red-700 dark:text-red-400 rounded-xl shadow-md">
@@ -136,10 +182,34 @@ const DeckDetail = () => {
                     </div>
 
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                      <button className="px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white text-xs font-medium shadow-lg transition-all">😊 Dễ</button>
-                      <button className="px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white text-xs font-medium shadow-lg transition-all">🤔 TB</button>
-                      <button className="px-3 py-2 rounded-lg bg-gray-600 hover:bg-gray-500 text-white text-xs font-medium shadow-lg transition-all">😰 Khó</button>
-                      <button className="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium shadow-lg transition-all">✅ Biết</button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleJudge('again'); }}
+                        disabled={updating}
+                        className="px-3 py-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-xs font-medium shadow-lg transition-all transform hover:scale-105"
+                      >
+                        🔄 Quên
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleJudge('hard'); }}
+                        disabled={updating}
+                        className="px-3 py-2 rounded-lg bg-orange-600 hover:bg-orange-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-xs font-medium shadow-lg transition-all transform hover:scale-105"
+                      >
+                        😰 Khó
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleJudge('good'); }}
+                        disabled={updating}
+                        className="px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-xs font-medium shadow-lg transition-all transform hover:scale-105"
+                      >
+                        👍 Tốt
+                      </button>
+                      <button 
+                        onClick={(e) => { e.stopPropagation(); handleJudge('easy'); }}
+                        disabled={updating}
+                        className="px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-xs font-medium shadow-lg transition-all transform hover:scale-105"
+                      >
+                        😊 Dễ
+                      </button>
                     </div>
                   </div>
                 </div>

@@ -2,6 +2,7 @@ package com.StudyMate.StudyMate.dto.response;
 
 import com.StudyMate.StudyMate.dto.request.FlashcardsRequest;
 import com.StudyMate.StudyMate.dto.request.UserRequest;
+import com.StudyMate.StudyMate.entity.User;
 import lombok.Data;
 
 import java.time.Instant;
@@ -13,10 +14,10 @@ public class FlashcardsProgressResponse {
     private Instant nextReviewAt;
     private String status;
     private Integer boxNumber;
-    private UserRequest user;
+    private User user;
 
     // SM2 fields
     private Double easinessFactor;
     private Integer repetitions;
-    private Integer interval;
+    private Integer intervalDays;
 }

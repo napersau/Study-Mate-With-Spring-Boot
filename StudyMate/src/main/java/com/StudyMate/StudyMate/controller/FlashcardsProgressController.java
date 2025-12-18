@@ -29,7 +29,7 @@ public class FlashcardsProgressController {
     }
 
 
-    @PutMapping("/{flashcardId}")
+    @PutMapping("/{flashcardsId}")
     ApiResponse<FlashcardsProgressResponse> updateFlashcardsProgress(@PathVariable("flashcardsId") Long flashcardsId,
                                                                      @RequestBody FlashcardsProgressRequest flashcardsProgressRequest){
         FlashcardsProgressResponse response = flashcardsProgressService.updateFlashcardsProgress(flashcardsId, flashcardsProgressRequest);
