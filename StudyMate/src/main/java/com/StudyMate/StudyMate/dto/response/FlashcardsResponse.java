@@ -13,4 +13,5 @@ public class FlashcardsResponse {
     private String pronunciation;
     private String example;
     private List<MediaResponse> mediaList;
+    private FlashcardsProgressResponse flashcardsProgress;
 }

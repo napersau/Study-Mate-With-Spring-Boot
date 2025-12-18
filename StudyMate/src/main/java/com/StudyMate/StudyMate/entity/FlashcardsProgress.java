@@ -34,6 +34,15 @@ public class FlashcardsProgress {
     @Column(name = "box_number")
     private Integer boxNumber; // For spaced repetition systems
 
+    @Column(name = "easiness_factor") // EF, default = 2.5
+    private Double easinessFactor;
+
+    @Column(name = "interval_factor")
+    private Integer repetitions;        // successive correct reps
+
+    @Column(name = "interval")
+    private Integer interval;           // days until next review
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

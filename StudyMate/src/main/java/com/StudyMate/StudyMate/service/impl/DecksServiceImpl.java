@@ -4,14 +4,15 @@ package com.StudyMate.StudyMate.service.impl;
 import com.StudyMate.StudyMate.dto.request.DecksRequest;
 import com.StudyMate.StudyMate.dto.request.FlashcardsRequest;
 import com.StudyMate.StudyMate.dto.response.DecksResponse;
+import com.StudyMate.StudyMate.dto.response.FlashcardsProgressResponse;
 import com.StudyMate.StudyMate.dto.response.MediaResponse;
-import com.StudyMate.StudyMate.entity.Decks;
-import com.StudyMate.StudyMate.entity.Flashcards;
-import com.StudyMate.StudyMate.entity.Media;
+import com.StudyMate.StudyMate.entity.*;
 import com.StudyMate.StudyMate.repository.DecksRepository;
+import com.StudyMate.StudyMate.repository.FlashcardsProgressRepository;
 import com.StudyMate.StudyMate.repository.FlashcardsRepository;
 import com.StudyMate.StudyMate.repository.MediaRepository;
 import com.StudyMate.StudyMate.service.DecksService;
+import com.StudyMate.StudyMate.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,8 @@ public class DecksServiceImpl implements DecksService {
     private final DecksRepository decksRepository;
     private final ModelMapper modelMapper;
     private final MediaRepository mediaRepository;
+    private final SecurityUtil securityUtil;
+    private final FlashcardsProgressRepository flashcardsProgressRepository;
 
     @Override
     public DecksResponse createDecks(List<FlashcardsRequest> flashcardsRequests, DecksRequest decksRequest) {
@@ -60,32 +63,54 @@ public class DecksServiceImpl implements DecksService {
 
     @Override
     public DecksResponse getDeckById(Long id) {
-        Decks decks = decksRepository.findById(id).orElse(null);
-        // flashcards đã được JPA load
+
+        User user = securityUtil.getCurrentUser();
+
+        Decks decks = decksRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Deck not found"));
+
         List<Flashcards> flashcards = decks.getFlashcardsList();
-        // lấy id flashcard
-        List<Long> flashcardIds = flashcards.stream()
-                .map(Flashcards::getId)
-                .toList();
-        // lấy audio 1 lần
-        List<Media> medias = mediaRepository
-                .findBySourceTypeAndSourceIdIn("flashcards", flashcardIds);
 
-        Map<Long, List<Media>> mediaMap = medias.stream()
-                .collect(Collectors.groupingBy(Media::getSourceId));
+        List<Long> ids = flashcards.stream().map(Flashcards::getId).toList();
 
+        // Progress
+        Map<Long, FlashcardsProgress> progressMap = flashcardsProgressRepository
+                .findByUserIdAndFlashcardIdIn(user.getId(), ids)
+                .stream().collect(Collectors.toMap(
+                        p -> p.getFlashcard().getId(), p -> p
+                ));
+
+        // Media
+        Map<Long, List<Media>> mediaMap = mediaRepository
+                .findBySourceTypeAndSourceIdIn("flashcards", ids)
+                .stream().collect(Collectors.groupingBy(Media::getSourceId));
+
+        // Build response
         DecksResponse response = modelMapper.map(decks, DecksResponse.class);
-        // gán audio vào flashcard response
+
         response.getFlashcardsList().forEach(fc -> {
-            List<Media> audioList = mediaMap.get(fc.getId());
-            if (audioList != null) {
+
+            // --- media ---
+            List<Media> m = mediaMap.get(fc.getId());
+            if (m != null) {
                 fc.setMediaList(
-                        audioList.stream()
-                                .map(media -> modelMapper.map(media, MediaResponse.class))
-                                .toList()
+                        m.stream().map(mm -> modelMapper.map(mm, MediaResponse.class)).toList()
                 );
             }
+
+            // --- progress ---
+            FlashcardsProgress p = progressMap.get(fc.getId());
+            if (p != null) {
+                fc.setFlashcardsProgress(modelMapper.map(p, FlashcardsProgressResponse.class));
+            } else {
+                // Flashcard NEW
+                FlashcardsProgressResponse newP = new FlashcardsProgressResponse();
+                newP.setStatus("NEW");
+                newP.setBoxNumber(1);
+                fc.setFlashcardsProgress(newP);
+            }
         });
+
         return response;
     }
 }

@@ -14,5 +14,9 @@ public class FlashcardsProgressResponse {
     private String status;
     private Integer boxNumber;
     private UserRequest user;
-    private FlashcardsRequest flashcard;
+
+    // SM2 fields
+    private Double easinessFactor;
+    private Integer repetitions;
+    private Integer interval;
 }
