@@ -42,7 +42,14 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentResponse getDocumentById(Long id) {
-        return null;
+
+        Document document = documentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+
+        document.setViewCount(document.getViewCount() + 1);
+        documentRepository.save(document);
+
+        return modelMapper.map(document, DocumentResponse.class);
     }
 
     @Override

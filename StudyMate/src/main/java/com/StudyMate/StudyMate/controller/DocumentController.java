@@ -39,4 +39,14 @@ public class DocumentController {
                 .build();
     }
 
+    @GetMapping("/{id}" )
+    ApiResponse<DocumentResponse> getDocumentById(@PathVariable Long id) {
+        DocumentResponse response = documentService.getDocumentById(id);
+        return ApiResponse.<DocumentResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Lấy tài liệu thành công")
+                .build();
+    }
+
 }

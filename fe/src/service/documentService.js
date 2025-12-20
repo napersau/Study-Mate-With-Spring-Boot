@@ -31,6 +31,20 @@ const documentService = {
             throw error;
         }
     },
+
+    // Lấy tài liệu theo ID
+    getDocumentById: async (id) => {
+        try {
+            const response = await httpClient.get(`/documents/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default documentService;
