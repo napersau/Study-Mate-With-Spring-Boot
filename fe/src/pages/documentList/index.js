@@ -9,12 +9,10 @@ const DocumentList = () => {
     const { documents, loading, error } = useDocumentsHook(category);
 
     const categoryNames = {
-        'PROGRAMMING': 'Lập trình',
-        'DATABASE': 'Cơ sở dữ liệu',
-        'ALGORITHM': 'Thuật toán',
-        'THEORY': 'Lý thuyết',
-        'TUTORIAL': 'Hướng dẫn',
-        'OTHER': 'Khác'
+        'GRAMMAR': 'Ngữ pháp',
+        'VOCABULARY': 'Từ vựng',
+        'SKILLS': 'Kỹ năng',
+        'EXAM_PREPARATION': 'Luyện thi'
     };
 
     const handleDocumentClick = (documentId) => {

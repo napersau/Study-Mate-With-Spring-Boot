@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import documentService from '../../service/documentService';
 
 const useDocumentAdminHook = () => {
@@ -14,6 +14,26 @@ const useDocumentAdminHook = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [documents, setDocuments] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+
+    // Fetch documents khi chọn category
+    useEffect(() => {
+        if (selectedCategory) {
+            fetchDocumentsByCategory(selectedCategory);
+        }
+    }, [selectedCategory]);
+
+    const fetchDocumentsByCategory = async (category) => {
+        try {
+            const response = await documentService.getDocumentsByCategory(category);
+            if (response.code === 1000) {
+                setDocuments(response.result);
+            }
+        } catch (err) {
+            console.error('Error fetching documents:', err);
+        }
+    };
 
     const handleSubmit = async () => {
         try {
@@ -41,6 +61,10 @@ const useDocumentAdminHook = () => {
 
             if (response.code === 1000) {
                 setSuccess(response.message || 'Tạo tài liệu thành công!');
+                // Refresh danh sách
+                if (selectedCategory) {
+                    fetchDocumentsByCategory(selectedCategory);
+                }
                 // Reset form
                 setFormData({
                     title: '',
@@ -64,7 +88,10 @@ const useDocumentAdminHook = () => {
         loading,
         error,
         success,
-        handleSubmit
+        handleSubmit,
+        documents,
+        selectedCategory,
+        setSelectedCategory
     };
 };
 

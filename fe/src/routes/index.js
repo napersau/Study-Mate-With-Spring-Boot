@@ -1,6 +1,7 @@
 import Home from "../pages/home";
 import Login from "../pages/login";
 import Layout from "../layout";
+import AdminLayout from "../layout/AdminLayout";
 import PrivateRoutes from "../components/PrivateRoutes";
 import PrivateRoutesAdmin from "../components/privateRoutesAdmin";
 import Register from "../pages/register";
@@ -11,6 +12,8 @@ import Documents from "../pages/documents";
 import DocumentList from "../pages/documentList";
 import DocumentDetail from "../pages/documentDetail";
 import DocumentAdmin from "../pages/documentAdmin";
+import UserAdmin from "../pages/userAdmin";
+import FlashcardsAdmin from "../pages/flashcardsAdmin";
 
 const Routes = [
   {
@@ -44,12 +47,19 @@ const Routes = [
         ],
       },
 
-      // Admin-only routes
+      // Admin-only routes with AdminLayout
       {
         element: <PrivateRoutesAdmin />,
         children: [
-          { path: "admin", element: <AdminHome /> },
-          { path: "admin/documents", element: <DocumentAdmin /> },
+          {
+            element: <AdminLayout />,
+            children: [
+              { path: "admin", element: <AdminHome /> },
+              { path: "admin/users", element: <UserAdmin /> },
+              { path: "admin/flashcards", element: <FlashcardsAdmin /> },
+              { path: "admin/documents", element: <DocumentAdmin /> },
+            ],
+          },
         ],
       },
     ],

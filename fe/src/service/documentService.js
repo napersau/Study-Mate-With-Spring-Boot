@@ -1,10 +1,15 @@
 import httpClient from '../config/httpClient';
+import { getToken } from './localStorageService';
 
 const documentService = {
     // Tạo tài liệu mới
     createDocument: async (documentData) => {
         try {
-            const response = await httpClient.post('/api/v1/documents', documentData);
+            const response = await httpClient.post('/documents', documentData, {
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            });
             return response.data;
         } catch (error) {
             throw error;
@@ -15,7 +20,12 @@ const documentService = {
     getDocumentsByCategory: async (category) => {
         try {
             const params = category ? { category } : {};
-            const response = await httpClient.get('/api/v1/documents/category', { params });
+            const response = await httpClient.get('/documents/category', { 
+                params,
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            });
             return response.data;
         } catch (error) {
             throw error;

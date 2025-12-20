@@ -1,64 +1,46 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, FileText, GraduationCap, Lightbulb, Code, Database, ArrowRight, Sparkles } from 'lucide-react';
+import { BookOpen, FileText, GraduationCap, Lightbulb, ArrowRight, Sparkles } from 'lucide-react';
 
 const Documents = () => {
     const navigate = useNavigate();
 
     const categories = [
         { 
-            id: 'PROGRAMMING', 
-            name: 'Lập trình', 
-            description: 'Các tài liệu về ngôn ngữ lập trình, framework, và công nghệ',
-            icon: Code,
+            id: 'GRAMMAR', 
+            name: 'Ngữ pháp', 
+            description: 'Các tài liệu về ngữ pháp tiếng Anh từ cơ bản đến nâng cao',
+            icon: BookOpen,
             gradient: 'from-blue-500 to-cyan-500',
             bgLight: 'bg-blue-50',
             bgDark: 'dark:bg-blue-900/20'
         },
         { 
-            id: 'DATABASE', 
-            name: 'Cơ sở dữ liệu', 
-            description: 'Tài liệu về SQL, NoSQL, và quản lý database',
-            icon: Database,
+            id: 'VOCABULARY', 
+            name: 'Từ vựng', 
+            description: 'Học từ vựng theo chủ đề, từ thông dụng và idioms',
+            icon: FileText,
             gradient: 'from-green-500 to-emerald-500',
             bgLight: 'bg-green-50',
             bgDark: 'dark:bg-green-900/20'
         },
         { 
-            id: 'ALGORITHM', 
-            name: 'Thuật toán', 
-            description: 'Các thuật toán và cấu trúc dữ liệu',
+            id: 'SKILLS', 
+            name: 'Kỹ năng', 
+            description: 'Rèn luyện 4 kỹ năng: Nghe, Nói, Đọc, Viết',
             icon: Lightbulb,
-            gradient: 'from-yellow-500 to-orange-500',
-            bgLight: 'bg-yellow-50',
-            bgDark: 'dark:bg-yellow-900/20'
-        },
-        { 
-            id: 'THEORY', 
-            name: 'Lý thuyết', 
-            description: 'Tài liệu lý thuyết về khoa học máy tính',
-            icon: BookOpen,
             gradient: 'from-purple-500 to-pink-500',
             bgLight: 'bg-purple-50',
             bgDark: 'dark:bg-purple-900/20'
         },
         { 
-            id: 'TUTORIAL', 
-            name: 'Hướng dẫn', 
-            description: 'Các hướng dẫn chi tiết từng bước',
+            id: 'EXAM_PREPARATION', 
+            name: 'Luyện thi', 
+            description: 'Tài liệu ôn thi IELTS, TOEIC, TOEFL và các kỳ thi khác',
             icon: GraduationCap,
             gradient: 'from-red-500 to-rose-500',
             bgLight: 'bg-red-50',
             bgDark: 'dark:bg-red-900/20'
-        },
-        { 
-            id: 'OTHER', 
-            name: 'Khác', 
-            description: 'Các tài liệu khác',
-            icon: FileText,
-            gradient: 'from-gray-500 to-slate-500',
-            bgLight: 'bg-gray-50',
-            bgDark: 'dark:bg-gray-900/20'
         }
     ];
 
