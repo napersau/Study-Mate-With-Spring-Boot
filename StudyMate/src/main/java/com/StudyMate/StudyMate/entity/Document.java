@@ -56,7 +56,7 @@ public class Document {
     // --- 2. Trạng thái & Thống kê ---
     @Builder.Default // Mặc định là false (Bản nháp)
     @Column(name = "is_published")
-    private boolean isPublished = false;
+    private Boolean isPublished = false;
 
     @Builder.Default
     @Column(name = "view_count")
