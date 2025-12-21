@@ -54,7 +54,19 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentResponse updateDocument(Long id, DocumentRequest documentRequest) {
-        return null;
+
+        Document document = documentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+        document.setTitle(documentRequest.getTitle());
+        document.setDescription(documentRequest.getDescription());
+        document.setThumbnail(documentRequest.getThumbnail());
+        document.setContent(documentRequest.getContent());
+        document.setCategory(documentRequest.getCategory());
+        document.setIsPublished(documentRequest.isPublished());
+
+        documentRepository.save(document);
+
+        return modelMapper.map(document, DocumentResponse.class);
     }
 
     @Override

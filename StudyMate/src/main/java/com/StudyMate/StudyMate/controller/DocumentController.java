@@ -49,4 +49,14 @@ public class DocumentController {
                 .build();
     }
 
+    @PutMapping("/{id}" )
+    ApiResponse<DocumentResponse> updateDocument(@PathVariable Long id, @RequestBody @Valid DocumentRequest documentRequest) {
+        DocumentResponse response = documentService.updateDocument(id, documentRequest);
+        return ApiResponse.<DocumentResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Cập nhật tài liệu thành công")
+                .build();
+    }
+
 }
