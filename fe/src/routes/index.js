@@ -14,6 +14,8 @@ import DocumentDetail from "../pages/documentDetail";
 import DocumentAdmin from "../pages/documentAdmin";
 import UserAdmin from "../pages/userAdmin";
 import FlashcardsAdmin from "../pages/flashcardsAdmin";
+import ExamList from "../pages/exams";
+import ExamDetail from "../pages/examDetail";
 
 const Routes = [
   {
@@ -44,6 +46,8 @@ const Routes = [
           { path: "documents", element: <Documents /> },
           { path: "documents/:category", element: <DocumentList /> },
           { path: "documents/:category/:documentId", element: <DocumentDetail /> },
+          { path: "exams", element: <ExamList /> },
+          { path: "exams/:examId", element: <ExamDetail /> },
         ],
       },
 
