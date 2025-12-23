@@ -65,7 +65,7 @@ public class SecurityConfig {
 
                                 .requestMatchers("/api/v1/documents/**").hasAnyRole("USER", "ADMIN")
 
-                                .requestMatchers("/api/v1/exam/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/api/v1/exams/**").hasAnyRole("USER", "ADMIN")
 
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2

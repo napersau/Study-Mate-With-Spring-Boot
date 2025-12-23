@@ -3,6 +3,7 @@ package com.StudyMate.StudyMate.DataLoader;
 import com.StudyMate.StudyMate.entity.Exam;
 import com.StudyMate.StudyMate.entity.Question;
 import com.StudyMate.StudyMate.entity.QuestionGroup;
+import com.StudyMate.StudyMate.enums.ExamType;
 import com.StudyMate.StudyMate.enums.PartType;
 import com.StudyMate.StudyMate.repository.ExamRepository;
 import com.StudyMate.StudyMate.repository.QuestionGroupRepository;
@@ -47,6 +48,7 @@ public class ToeicDataLoader implements CommandLineRunner {
         // 2. Tạo Đề thi gốc
         Exam exam = Exam.builder()
                 .title(examTitle)
+                .type(ExamType.TOEIC_FULL_TEST)
                 .description("Đề thi thử nghiệm được nạp từ DataLoader")
                 .duration(120)
                 .totalQuestions(200)

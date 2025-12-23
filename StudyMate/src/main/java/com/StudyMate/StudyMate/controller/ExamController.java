@@ -4,15 +4,13 @@ import com.StudyMate.StudyMate.dto.response.ApiResponse;
 import com.StudyMate.StudyMate.dto.response.ExamResponse;
 import com.StudyMate.StudyMate.service.ExamService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/exam")
+@RequestMapping("/api/v1/exams")
 public class ExamController {
 
     private final ExamService examService;
@@ -28,7 +26,7 @@ public class ExamController {
     }
 
     @GetMapping("/type" )
-    ApiResponse<List<ExamResponse>> getExamsByType(String examType) {
+    ApiResponse<List<ExamResponse>> getExamsByType(@RequestParam String examType) {
         List<ExamResponse> responses = examService.getExamsByType(examType);
         return ApiResponse.<List<ExamResponse>>builder()
                 .code(1000)
@@ -38,7 +36,7 @@ public class ExamController {
     }
 
     @GetMapping("/{id}")
-    ApiResponse<ExamResponse> getExamById(Long id) {
+    ApiResponse<ExamResponse> getExamById(@PathVariable Long id) {
         ExamResponse response = examService.getExamById(id);
         return ApiResponse.<ExamResponse>builder()
                 .code(1000)
