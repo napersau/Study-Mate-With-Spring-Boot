@@ -17,6 +17,7 @@ public enum ErrorCode {
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     PRODUCT_EXISTED(1008, "Product existed", HttpStatus.BAD_REQUEST),
     FLASHCARDS_NOT_FOUND(1009, "Flashcards not found", HttpStatus.NOT_FOUND),
+    EXAM_NOT_FOUND(1010, "Exam not found", HttpStatus.NOT_FOUND)
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

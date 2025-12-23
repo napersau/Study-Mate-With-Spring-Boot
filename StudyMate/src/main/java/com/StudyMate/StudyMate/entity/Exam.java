@@ -1,5 +1,6 @@
 package com.StudyMate.StudyMate.entity;
 
+import com.StudyMate.StudyMate.enums.ExamType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,6 +25,10 @@ public class Exam {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private ExamType type;
 
     @Column(name = "duration_minutes")
     private Integer duration; // Thời gian tính bằng phút (VD: 120)
