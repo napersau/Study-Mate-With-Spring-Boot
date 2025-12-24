@@ -145,19 +145,32 @@ const DocumentDetail = () => {
                                 prose-li:text-gray-900 dark:prose-li:text-gray-100
                                 prose-li:mb-2 prose-li:leading-relaxed prose-li:text-lg
                                 
-                                /* Tables - Rõ ràng, dễ đọc */
-                                prose-table:w-full prose-table:border-collapse prose-table:my-6
+                                /* Tables - Bảng rõ ràng với border đậm nét */
+                                prose-table:w-full prose-table:border-collapse prose-table:my-8
                                 prose-table:bg-white dark:prose-table:bg-gray-800
-                                prose-thead:bg-blue-100 dark:prose-thead:bg-blue-900
-                                prose-th:border prose-th:border-gray-400 dark:prose-th:border-gray-500
-                                prose-th:px-4 prose-th:py-3 prose-th:text-left 
-                                prose-th:font-bold prose-th:text-gray-900 dark:prose-th:text-white
-                                prose-th:text-base
-                                prose-td:border prose-td:border-gray-400 dark:prose-td:border-gray-500
-                                prose-td:px-4 prose-td:py-3 
+                                prose-table:border-2 prose-table:border-gray-800 dark:prose-table:border-gray-300
+                                prose-table:rounded-lg prose-table:overflow-hidden prose-table:shadow-lg
+                                
+                                /* Table Head - Header nổi bật */
+                                prose-thead:bg-gradient-to-r prose-thead:from-blue-600 prose-thead:to-purple-600
+                                prose-th:border-2 prose-th:border-gray-800 dark:prose-th:border-gray-300
+                                prose-th:px-5 prose-th:py-4 prose-th:text-left 
+                                prose-th:font-bold prose-th:text-white
+                                prose-th:text-base prose-th:uppercase prose-th:tracking-wide
+                                
+                                /* Table Body - Cells rõ ràng */
+                                prose-tbody:bg-white dark:prose-tbody:bg-gray-800
+                                prose-td:border-2 prose-td:border-gray-600 dark:prose-td:border-gray-400
+                                prose-td:px-5 prose-td:py-4 
                                 prose-td:text-gray-900 dark:prose-td:text-gray-100
-                                prose-td:text-base
-                                prose-tr:even:bg-gray-100 dark:prose-tr:even:bg-gray-700/50
+                                prose-td:text-base prose-td:font-medium
+                                
+                                /* Table Rows - Zebra striping đẹp */
+                                prose-tr:border-2 prose-tr:border-gray-800 dark:prose-tr:border-gray-300
+                                prose-tbody:prose-tr:even:bg-blue-50 dark:prose-tbody:prose-tr:even:bg-gray-700/70
+                                prose-tbody:prose-tr:odd:bg-white dark:prose-tbody:prose-tr:odd:bg-gray-800
+                                prose-tbody:prose-tr:hover:bg-blue-100 dark:prose-tbody:prose-tr:hover:bg-gray-600/50
+                                prose-tbody:prose-tr:transition-colors prose-tbody:prose-tr:duration-150
                                 
                                 /* Code - Nổi bật */
                                 prose-code:text-pink-700 dark:prose-code:text-pink-300
