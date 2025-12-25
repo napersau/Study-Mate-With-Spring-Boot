@@ -1,5 +1,6 @@
 package com.StudyMate.StudyMate.service.impl;
 
+import com.StudyMate.StudyMate.dto.request.ExamRequest;
 import com.StudyMate.StudyMate.dto.response.ExamResponse;
 import com.StudyMate.StudyMate.entity.Exam;
 import com.StudyMate.StudyMate.enums.ExamType;
@@ -44,6 +45,18 @@ public class ExamServiceImpl implements ExamService {
         Exam exam = examRepository.findById(id).orElseThrow(()
                 -> new AppException(ErrorCode.EXAM_NOT_FOUND));
 
+        return modelMapper.map(exam, ExamResponse.class);
+    }
+
+    @Override
+    public ExamResponse updateExam(Long id, ExamRequest examRequest) {
+
+        Exam exam = examRepository.findById(id).orElseThrow(()
+                -> new AppException(ErrorCode.EXAM_NOT_FOUND));
+        exam.setDescription(examRequest.getDescription());
+        exam.setTitle(examRequest.getTitle());
+        exam.setType(examRequest.getType());
+        exam = examRepository.save(exam);
         return modelMapper.map(exam, ExamResponse.class);
     }
 

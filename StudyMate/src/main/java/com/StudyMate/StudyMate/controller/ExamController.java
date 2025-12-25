@@ -1,5 +1,6 @@
 package com.StudyMate.StudyMate.controller;
 
+import com.StudyMate.StudyMate.dto.request.ExamRequest;
 import com.StudyMate.StudyMate.dto.response.ApiResponse;
 import com.StudyMate.StudyMate.dto.response.ExamResponse;
 import com.StudyMate.StudyMate.service.ExamService;
@@ -42,6 +43,16 @@ public class ExamController {
                 .code(1000)
                 .result(response)
                 .message("Load exam by id successfully")
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    ApiResponse<ExamResponse> updateExam(@PathVariable Long id, @RequestBody ExamRequest examRequest) {
+        ExamResponse response = examService.updateExam(id, examRequest);
+        return ApiResponse.<ExamResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Update exam successfully")
                 .build();
     }
 
