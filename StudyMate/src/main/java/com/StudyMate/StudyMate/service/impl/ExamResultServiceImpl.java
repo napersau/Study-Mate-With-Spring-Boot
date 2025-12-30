@@ -73,4 +73,13 @@ public class ExamResultServiceImpl implements ExamResultService {
         return modelMapper.map(savedExamResult, ExamResultResponse.class);
     }
 
+    @Override
+    public ExamResultResponse getExamResultById(Long id) {
+
+        ExamResult examResult = examResultRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("ExamResult not found with id: " + id));
+
+        return modelMapper.map(examResult, ExamResultResponse.class);
+    }
+
 }
