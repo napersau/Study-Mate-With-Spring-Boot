@@ -16,6 +16,9 @@ import UserAdmin from "../pages/userAdmin";
 import FlashcardsAdmin from "../pages/flashcardsAdmin";
 import ExamList from "../pages/exams";
 import ExamDetail from "../pages/examDetail";
+import Courses from "../pages/courses";
+import CourseDetail from "../pages/courseDetail";
+import CourseAdmin from "../pages/courseAdmin";
 
 const Routes = [
   {
@@ -48,6 +51,8 @@ const Routes = [
           { path: "documents/:category/:documentId", element: <DocumentDetail /> },
           { path: "exams", element: <ExamList /> },
           { path: "exams/:examId", element: <ExamDetail /> },
+          { path: "courses", element: <Courses /> },
+          { path: "courses/:courseId", element: <CourseDetail /> },
         ],
       },
 
@@ -62,6 +67,7 @@ const Routes = [
               { path: "admin/users", element: <UserAdmin /> },
               { path: "admin/flashcards", element: <FlashcardsAdmin /> },
               { path: "admin/documents", element: <DocumentAdmin /> },
+              { path: "admin/courses", element: <CourseAdmin /> },
             ],
           },
         ],

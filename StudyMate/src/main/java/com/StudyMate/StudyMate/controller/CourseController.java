@@ -19,28 +19,41 @@ public class CourseController {
 
     @PostMapping
     ApiResponse<CourseResponse> createCourse(@RequestBody CourseRequest courseRequest){
-        CourseResponse courseResponse = courseService.createCourse(courseRequest);
+        CourseResponse response = courseService.createCourse(courseRequest);
         return ApiResponse.<CourseResponse>builder()
-                .result(courseResponse)
+                .result(response)
+                .code(1000)
                 .message("Course created successfully")
                 .build();
     }
 
     @GetMapping("/{id}")
     ApiResponse<CourseResponse> getCourseById(@PathVariable Long id) {
-        CourseResponse courseResponse = courseService.getCourseById(id);
+        CourseResponse response = courseService.getCourseById(id);
         return ApiResponse.<CourseResponse>builder()
-                .result(courseResponse)
+                .result(response)
+                .code(1000)
                 .message("Course fetched successfully")
                 .build();
     }
 
     @GetMapping("/all")
     ApiResponse<List<CourseResponse>> getAllCourses() {
-        List<CourseResponse> courses = courseService.getAllCourses();
+        List<CourseResponse> response = courseService.getAllCourses();
         return ApiResponse.<List<CourseResponse>>builder()
-                .result(courses)
+                .result(response)
+                .code(1000)
                 .message("All courses fetched successfully")
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    ApiResponse<CourseResponse> publishCourse(@PathVariable Long id){
+        CourseResponse response = courseService.publishCourse(id);
+        return ApiResponse.<CourseResponse>builder()
+                .result(response)
+                .code(1000)
+                .message("Course published successfully")
                 .build();
     }
 }

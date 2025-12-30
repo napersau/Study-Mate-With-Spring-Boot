@@ -15,6 +15,6 @@ public class CourseResponse {
     private String imageUrl;
     private String level;
     private Integer totalStudents = 0;
-    private boolean isPublished;
+    private Boolean isPublished;
     private List<SectionResponse> sections;
 }

@@ -51,4 +51,21 @@ public class CourseServiceImpl implements CourseService {
         return courses.stream()
                 .map(course -> modelMapper.map(course, CourseResponse.class)).toList();
     }
+
+    @Override
+    public CourseResponse updateCourse(Long id, CourseRequest courseRequest) {
+        return null;
+    }
+
+    @Override
+    public CourseResponse publishCourse(Long id) {
+
+        Course course = courseRepository.findById(id).orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+        course.setIsPublished(true);
+        courseRepository.save(course);
+
+        return modelMapper.map(course, CourseResponse.class);
+    }
+
+
 }

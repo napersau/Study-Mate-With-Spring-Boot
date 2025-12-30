@@ -41,7 +41,7 @@ public class Course {
 
     private Double rating; // Đánh giá trung bình (4.5 sao)
 
-    private boolean isPublished; // True: Đang mở bán, False: Bản nháp
+    private Boolean isPublished; // True: Đang mở bán, False: Bản nháp
 
     // Quan hệ: 1 Khóa học có nhiều Chương
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)

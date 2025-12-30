@@ -4,7 +4,8 @@ import {
     LayoutDashboard, 
     Users, 
     CreditCard, 
-    FileText, 
+    FileText,
+    BookOpen,
     Menu, 
     X,
     ChevronLeft,
@@ -43,6 +44,12 @@ const AdminLayout = () => {
             icon: FileText,
             path: '/admin/documents',
             description: 'Quản lý tài liệu'
+        },
+        {
+            title: 'Khóa học',
+            icon: BookOpen,
+            path: '/admin/courses',
+            description: 'Quản lý khóa học'
         }
     ];
 
