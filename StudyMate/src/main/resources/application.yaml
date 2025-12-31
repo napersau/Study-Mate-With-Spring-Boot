@@ -37,6 +37,16 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID:}
             client-secret: ${GOOGLE_CLIENT_SECRET:}
+  ai:
+    openai:
+      # Key lấy từ Google AI Studio
+      api-key: ${GEMINI_API_KEY:}
+      # Dòng này cực quan trọng: nó bảo thư viện OpenAI trỏ sang server Google
+      base-url: ${GEMINI_API_URL:}
+      chat:
+        options:
+          model: gemini-1.5-flash
+          temperature: 0.7
 
 # Server configuration
 server:
@@ -68,4 +78,4 @@ jwt:
 gemini:
   api:
     key: ${GEMINI_API_KEY:}
-    url: ${GEMINI_API_URL:https://generativelanguage.googleapis.com/v1beta/models}
+    url: ${GEMINI_API_URL:}
