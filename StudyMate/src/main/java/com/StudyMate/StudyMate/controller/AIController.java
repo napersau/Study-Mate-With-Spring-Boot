@@ -22,6 +22,7 @@ public class AIController {
         String message = request.get("message");
         return ApiResponse.<String>builder()
                 .result(aiService.chatWithAI(message))
+                .code(1000)
                 .build();
     }
 
@@ -30,6 +31,7 @@ public class AIController {
         String text = request.get("text");
         return ApiResponse.<String>builder()
                 .result(aiService.translateText(text))
+                .code(1000)
                 .build();
     }
 }

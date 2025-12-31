@@ -2,65 +2,101 @@ package com.StudyMate.StudyMate.service.impl;
 
 import com.StudyMate.StudyMate.service.AIService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import java.util.List;
 import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AIServiceImpl implements AIService {
 
-    private final ChatClient chatClient;
+    @Value("${gemini.api.key}")
+    private String apiKey;
 
-    // Tính năng 1: Chatbot gia sư
+    @Value("${gemini.api.url}")
+    private String apiUrl;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
     @Override
-    public String chatWithAI(String userMessage) {
-        // System prompt: Định hình tính cách cho AI
-        String systemText = """
-                Bạn là StudyMate AI - một gia sư tiếng Anh nhiệt tình và am hiểu.
-                Hãy trả lời ngắn gọn, súc tích và tập trung vào việc giải thích ngữ pháp/từ vựng.
-                Nếu người dùng hỏi ngoài lề, hãy khéo léo đưa họ về bài học.
-                """;
+    public String chatWithAI(String message) {
+        try {
+            log.info("API Key exists: {}", apiKey != null && !apiKey.isEmpty());
+            log.info("API URL: {}", apiUrl);
 
-        return chatClient.prompt()
-                .system(systemText)
-                .user(userMessage)
-                .call()
-                .content();
+            Map<String, Object> body = Map.of(
+                    "contents", List.of(
+                            Map.of(
+                                    "parts", List.of(
+                                            Map.of("text", message)
+                                    )
+                            )
+                    )
+            );
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            HttpEntity<Map<String, Object>> request =
+                    new HttpEntity<>(body, headers);
+
+            String url = apiUrl + "?key=" + apiKey;
+            log.info("Calling Gemini API: {}", url);
+
+            ResponseEntity<Map> response =
+                    restTemplate.postForEntity(url, request, Map.class);
+
+            log.info("Gemini response: {}", response.getBody());
+
+            return extractText(response.getBody());
+        } catch (Exception e) {
+            log.error("Error calling Gemini API", e);
+            throw new RuntimeException("AI service error: " + e.getMessage());
+        }
     }
 
-    // Tính năng 2: Dịch từ/Cụm từ (Instant Translate)
     @Override
     public String translateText(String text) {
-        String promptText = "Dịch cụm từ hoặc câu sau sang tiếng Việt sát nghĩa ngữ cảnh nhất: {text}. Chỉ trả về kết quả dịch, không giải thích thêm.";
-
-        PromptTemplate template = new PromptTemplate(promptText);
-        Prompt prompt = template.create(Map.of("text", text));
-
-        return chatClient.prompt(prompt)
-                .call()
-                .content();
+        return chatWithAI(
+                "Translate the following text into Vietnamese: " + text
+        );
     }
 
-
-    // Tính năng 3: Giải thích tại sao sai
     @Override
-    public String explainAnswer(String question, String wrongAnswer, String correctAnswer) {
-        String promptText = String.format("""
-                Tôi đang làm câu trắc nghiệm: %s
-                Tôi chọn: %s
-                Nhưng đáp án đúng là: %s
-                Hãy giải thích ngắn gọn tại sao tôi sai và tại sao đáp án kia đúng?
-                """, question, wrongAnswer, correctAnswer);
+    public String explainAnswer(String question, String wrong, String correct) {
+        return chatWithAI("""
+                Question: %s
+                Your answer: %s
+                Correct answer: %s
+                Explain clearly why the correct answer is right.
+                """.formatted(question, wrong, correct));
+    }
 
-        return chatClient.prompt()
-                .user(promptText)
-                .call()
-                .content();
+    @SuppressWarnings("unchecked")
+    private String extractText(Map<String, Object> body) {
+        try {
+            List<Map<String, Object>> candidates =
+                    (List<Map<String, Object>>) body.get("candidates");
+
+            Map<String, Object> content =
+                    (Map<String, Object>) candidates.get(0).get("content");
+
+            List<Map<String, Object>> parts =
+                    (List<Map<String, Object>>) content.get("parts");
+
+            return parts.get(0).get("text").toString();
+        } catch (Exception e) {
+            return "AI response error";
+        }
     }
 }
 
