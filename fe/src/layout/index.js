@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from '../components/header';
 import Footer from '../components/footer';
 import AIChatWidget from '../components/AIChatWidget';
+import TranslateWidget from '../components/TranslateWidget';
 
 function AppLayout(){
     const location = useLocation();
@@ -22,6 +23,9 @@ function AppLayout(){
             
             {/* Footer hiển thị cho tất cả các trang */}
             <Footer />
+
+            {/* Translate Widget - Box dịch nhanh */}
+            <TranslateWidget />
 
             {/* AI Chat Widget - Hiển thị ở tất cả các trang */}
             <AIChatWidget />

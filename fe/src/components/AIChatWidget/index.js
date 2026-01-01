@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Loader, Sparkles } from 'lucide-react';
+import { MessageCircle, X, Send, Loader, Bot } from 'lucide-react';
 import aiService from '../../service/aiService';
 
 const AIChatWidget = () => {
@@ -74,12 +74,12 @@ const AIChatWidget = () => {
         <div className="fixed bottom-6 right-6 z-50">
             {/* Chat Window */}
             {isOpen && (
-                <div className="mb-4 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
+                <div className="mb-4 w-[480px] h-[650px] bg-white dark:bg-gray-800 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                                <Sparkles className="w-6 h-6 text-white" />
+                                <Bot className="w-6 h-6 text-white" />
                             </div>
                             <div>
                                 <h3 className="text-white font-bold text-lg">AI Assistant</h3>
@@ -110,7 +110,7 @@ const AIChatWidget = () => {
                                 >
                                     {message.role === 'assistant' && (
                                         <div className="flex items-center gap-2 mb-2">
-                                            <Sparkles className="w-4 h-4 text-purple-600" />
+                                            <Bot className="w-4 h-4 text-purple-600" />
                                             <span className="text-xs font-semibold text-purple-600 dark:text-purple-400">AI Assistant</span>
                                         </div>
                                     )}
@@ -166,9 +166,9 @@ const AIChatWidget = () => {
             {!isOpen && (
                 <button
                     onClick={() => setIsOpen(true)}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white w-16 h-16 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center group hover:scale-110 animate-bounce"
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white w-[72px] h-[72px] rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center group hover:scale-110 animate-bounce"
                 >
-                    <MessageCircle className="w-7 h-7 group-hover:rotate-12 transition-transform" />
+                    <Bot className="w-8 h-8 group-hover:rotate-12 transition-transform" />
                     <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse"></span>
                 </button>
             )}

@@ -14,7 +14,8 @@ const aiService = {
                     },
                 }
             );
-            return response.data;
+            // Extract result from ApiResponse structure {code, result, totalPages}
+            return response.data.result || response.data;
         } catch (error) {
             throw error;
         }
@@ -32,7 +33,8 @@ const aiService = {
                     },
                 }
             );
-            return response.data;
+            // Extract result from ApiResponse structure {code, result, totalPages}
+            return response.data.result || response.data;
         } catch (error) {
             throw error;
         }
