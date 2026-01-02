@@ -14,4 +14,5 @@ public class ExamRequest {
     private ExamType type;
     private Integer totalQuestions; // Tổng số câu (VD: 200)
     private List<QuestionGroupRequest> questionGroups;
+    private List<Long> questionGroupsIds;
 }

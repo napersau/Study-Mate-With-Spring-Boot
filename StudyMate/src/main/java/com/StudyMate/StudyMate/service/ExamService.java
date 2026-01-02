@@ -11,4 +11,5 @@ public interface ExamService {
     List<ExamResponse> getExamsByType(String examType);
     ExamResponse getExamById(Long id);
     ExamResponse updateExam(Long id, ExamRequest examRequest);
+    ExamResponse createExam(ExamRequest examRequest);
 }

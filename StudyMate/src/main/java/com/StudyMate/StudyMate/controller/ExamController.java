@@ -56,4 +56,15 @@ public class ExamController {
                 .build();
     }
 
+    @PostMapping
+    ApiResponse<ExamResponse> createExam(@RequestBody ExamRequest examRequest){
+        ExamResponse response = examService.createExam(examRequest);
+        return ApiResponse.<ExamResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Create exam successfully")
+                .build();
+    }
+
+
 }

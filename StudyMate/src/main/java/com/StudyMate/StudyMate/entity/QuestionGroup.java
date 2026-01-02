@@ -30,7 +30,7 @@ public class QuestionGroup {
     private String imageUrl; // Link file ảnh (Part 1)
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exam_id")
+    @JoinColumn(name = "exam_id", nullable = true)
     private Exam exam;
 
     // Quan hệ 1-N: Một bài đọc/nghe có nhiều câu hỏi nhỏ
