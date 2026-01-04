@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/question-groups")
 @RequiredArgsConstructor
 public class QuestionGroupController {
+
     private final QuestionGroupService questionGroupService;
 
     @GetMapping

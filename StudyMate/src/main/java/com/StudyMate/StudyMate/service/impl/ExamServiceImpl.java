@@ -56,10 +56,18 @@ public class ExamServiceImpl implements ExamService {
 
         Exam exam = examRepository.findById(id).orElseThrow(()
                 -> new AppException(ErrorCode.EXAM_NOT_FOUND));
+
+        List<QuestionGroup> questionGroupList = questionGroupRepository.findByIdIn(examRequest.getQuestionGroupsIds());
+
+        exam.setQuestionGroups(questionGroupList);
         exam.setDescription(examRequest.getDescription());
         exam.setTitle(examRequest.getTitle());
         exam.setType(examRequest.getType());
-        exam = examRepository.save(exam);
+
+        examRepository.save(exam);
+
+        questionGroupList.forEach(questionGroup -> questionGroup.setExam(exam));
+
         return modelMapper.map(exam, ExamResponse.class);
     }
 
