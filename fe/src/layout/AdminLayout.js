@@ -6,6 +6,7 @@ import {
     CreditCard, 
     FileText,
     BookOpen,
+    FileCheck,
     Menu, 
     X,
     ChevronLeft,
@@ -50,6 +51,12 @@ const AdminLayout = () => {
             icon: BookOpen,
             path: '/admin/courses',
             description: 'Quản lý khóa học'
+        },
+        {
+            title: 'Đề thi',
+            icon: FileCheck,
+            path: '/admin/exams',
+            description: 'Quản lý đề thi'
         }
     ];
 

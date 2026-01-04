@@ -19,6 +19,7 @@ import ExamDetail from "../pages/examDetail";
 import Courses from "../pages/courses";
 import CourseDetail from "../pages/courseDetail";
 import CourseAdmin from "../pages/courseAdmin";
+import ExamAdmin from "../pages/examAdmin";
 
 const Routes = [
   {
@@ -68,6 +69,7 @@ const Routes = [
               { path: "admin/flashcards", element: <FlashcardsAdmin /> },
               { path: "admin/documents", element: <DocumentAdmin /> },
               { path: "admin/courses", element: <CourseAdmin /> },
+              { path: "admin/exams", element: <ExamAdmin /> },
             ],
           },
         ],
