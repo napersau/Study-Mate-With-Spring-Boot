@@ -13,18 +13,18 @@ const useExamAdminHook = () => {
         id: null,
         title: '',
         description: '',
-        examType: 'READING',
-        duration: 60,
+        examType: 'TOEIC_FULL_TEST',
+        duration: 120,
         questionGroupIds: [],
     });
 
     // Exam types options
     const examTypes = [
-        { value: 'READING', label: 'Reading' },
-        { value: 'LISTENING', label: 'Listening' },
-        { value: 'WRITING', label: 'Writing' },
-        { value: 'SPEAKING', label: 'Speaking' },
-        { value: 'FULL_TEST', label: 'Full Test' },
+        { value: 'TOEIC_FULL_TEST', label: 'TOEIC Full Test (200 câu)', duration: 120 },
+        { value: 'TOEIC_MINI_TEST', label: 'TOEIC Mini Test (50-100 câu)', duration: 60 },
+        { value: 'IELTS_ACADEMIC', label: 'IELTS Academic', duration: 180 },
+        { value: 'IELTS_GENERAL', label: 'IELTS General Training', duration: 180 },
+        { value: 'MOCK_TEST', label: 'Mock Test / Bài kiểm tra', duration: 45 },
     ];
 
     // Load all exams
@@ -42,11 +42,15 @@ const useExamAdminHook = () => {
         }
     };
 
-    // Load available question groups for selected type
-    const loadAvailableQuestionGroups = async (type) => {
+    // Load available question groups (ALL parts chưa có exam)
+    const loadAvailableQuestionGroups = async () => {
+        console.log('Loading all available question groups...');
         try {
-            const response = await examService.getAvailableQuestionGroups(type);
-            setAvailableQuestionGroups(response.result || response);
+            const response = await examService.getAvailableQuestionGroups();
+            console.log('Question groups response:', response);
+            const groups = response.result || response;
+            console.log('Available question groups:', groups);
+            setAvailableQuestionGroups(groups);
         } catch (err) {
             console.error('Load question groups error:', err);
             setAvailableQuestionGroups([]);
@@ -57,18 +61,29 @@ const useExamAdminHook = () => {
         loadExams();
     }, []);
 
-    // Load question groups when exam type changes in create/edit mode
+    // Load question groups when entering create/edit mode
     useEffect(() => {
-        if ((mode === 'create' || mode === 'edit') && formData.examType) {
-            loadAvailableQuestionGroups(formData.examType);
+        if (mode === 'create' || mode === 'edit') {
+            loadAvailableQuestionGroups();
         }
-    }, [mode, formData.examType]);
+    }, [mode]);
 
     const handleInputChange = (field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [field]: value
-        }));
+        if (field === 'examType') {
+            // Auto-set duration based on exam type
+            const selectedType = examTypes.find(t => t.value === value);
+            setFormData(prev => ({
+                ...prev,
+                examType: value,
+                duration: selectedType?.duration || 60,
+                questionGroupIds: [], // Reset selected groups when type changes
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [field]: value
+            }));
+        }
     };
 
     const handleQuestionGroupToggle = (groupId) => {
@@ -86,8 +101,8 @@ const useExamAdminHook = () => {
             id: null,
             title: '',
             description: '',
-            examType: 'READING',
-            duration: 60,
+            examType: 'TOEIC_FULL_TEST',
+            duration: 120,
             questionGroupIds: [],
         });
         setError(null);
@@ -100,8 +115,8 @@ const useExamAdminHook = () => {
             id: exam.id,
             title: exam.title || '',
             description: exam.description || '',
-            examType: exam.examType || 'READING',
-            duration: exam.duration || 60,
+            examType: exam.examType || 'TOEIC_FULL_TEST',
+            duration: exam.duration || 120,
             questionGroupIds: exam.questionGroups?.map(qg => qg.id) || [],
         });
         setError(null);
@@ -170,8 +185,8 @@ const useExamAdminHook = () => {
             id: null,
             title: '',
             description: '',
-            examType: 'READING',
-            duration: 60,
+            examType: 'TOEIC_FULL_TEST',
+            duration: 120,
             questionGroupIds: [],
         });
         setError(null);

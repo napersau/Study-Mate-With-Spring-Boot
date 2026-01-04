@@ -89,11 +89,14 @@ const examService = {
         }
     },
 
-    // Lấy các Question Groups chưa có Exam theo type
-    getAvailableQuestionGroups: async (type) => {
+    // Lấy các Question Groups chưa có Exam (ALL types)
+    getAvailableQuestionGroups: async () => {
         try {
+            // Gọi endpoint lấy tất cả question groups chưa có exam
+            // Backend cần API: GET /api/v1/question-groups?type=null 
+            // hoặc GET /api/v1/question-groups/available
             const response = await httpClient.get('/question-groups', {
-                params: { type },
+                params: { type: '' }, // Empty string để backend trả về tất cả
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
                 },
