@@ -66,4 +66,13 @@ public class ExamController {
                 .build();
     }
 
+    @DeleteMapping("/{id}")
+    ApiResponse<Void> deleteExam(@PathVariable Long id) {
+        examService.deleteExam(id);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Delete exam successfully")
+                .build();
+    }
+
 }

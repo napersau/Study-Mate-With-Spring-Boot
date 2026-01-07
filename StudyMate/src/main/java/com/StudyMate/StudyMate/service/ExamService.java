@@ -12,4 +12,5 @@ public interface ExamService {
     ExamResponse getExamById(Long id);
     ExamResponse updateExam(Long id, ExamRequest examRequest);
     ExamResponse createExam(ExamRequest examRequest);
+    void deleteExam(Long id);
 }

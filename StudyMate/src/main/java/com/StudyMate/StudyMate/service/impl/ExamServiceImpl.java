@@ -90,4 +90,9 @@ public class ExamServiceImpl implements ExamService {
         return modelMapper.map(exam, ExamResponse.class);
     }
 
+    @Override
+    public void deleteExam(Long id) {
+        examRepository.deleteById(id);
+    }
+
 }
