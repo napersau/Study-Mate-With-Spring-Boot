@@ -59,4 +59,13 @@ public class DocumentController {
                 .build();
     }
 
+    @DeleteMapping("/{id}" )
+    ApiResponse<Void> deleteDocument(@PathVariable Long id) {
+        documentService.deleteDocument(id);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Xóa tài liệu thành công")
+                .build();
+    }
+
 }

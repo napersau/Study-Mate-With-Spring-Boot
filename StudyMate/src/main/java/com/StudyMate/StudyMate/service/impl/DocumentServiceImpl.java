@@ -85,6 +85,6 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void deleteDocument(Long id) {
-
+        documentRepository.deleteById(id);
     }
 }
