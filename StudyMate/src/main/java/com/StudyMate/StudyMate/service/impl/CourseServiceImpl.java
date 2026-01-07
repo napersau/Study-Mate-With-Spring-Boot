@@ -67,5 +67,10 @@ public class CourseServiceImpl implements CourseService {
         return modelMapper.map(course, CourseResponse.class);
     }
 
+    @Override
+    public void deleteCourse(Long id) {
+        courseRepository.deleteById(id);
+    }
+
 
 }

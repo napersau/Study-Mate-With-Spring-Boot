@@ -56,4 +56,13 @@ public class CourseController {
                 .message("Course published successfully")
                 .build();
     }
+
+    @DeleteMapping("/{id}")
+    ApiResponse<Void> deleteCourse(@PathVariable Long id) {
+        courseService.deleteCourse(id);
+        return ApiResponse.<Void>builder()
+                .code(1000)
+                .message("Course deleted successfully")
+                .build();
+    }
 }
