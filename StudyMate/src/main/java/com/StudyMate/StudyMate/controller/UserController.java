@@ -19,9 +19,12 @@ public class UserController {
 
     @PostMapping
     ApiResponse<UserResponse> createUser(@RequestBody @Valid UserRequest userCreateRequest) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.createUser(userCreateRequest));
-        return apiResponse;
+        UserResponse response = userService.createUser(userCreateRequest);
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Create user successfully")
+                .build();
     }
 
     @GetMapping
@@ -29,27 +32,35 @@ public class UserController {
         return ApiResponse.<List<UserResponse>>builder()
                 .code(1000)
                 .result(userService.getUsers())
+                .message("Get all users successfully")
                 .build();
     }
 
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUser(@PathVariable("userId") Long userId) {
         return ApiResponse.<UserResponse>builder()
+                .code(1000)
                 .result(userService.findUserById(userId))
+                .message("Get user successfully")
                 .build();
     }
 
     @PutMapping("/{userId}")
-    UserResponse updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserRequest userUpdateRequest) {
-        return userService.updateUser(userId, userUpdateRequest);
+    ApiResponse<UserResponse> updateUser(@PathVariable("userId") Long userId, @RequestBody @Valid UserRequest userUpdateRequest) {
+        UserResponse response = userService.updateUser(userId, userUpdateRequest);
+        return ApiResponse.<UserResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Update user successfully")
+                .build();
     }
 
     @PutMapping("/password/{userId}")
     ApiResponse<UserResponse> changePassword(@PathVariable("userId") Long userId, @RequestBody @Valid UserRequest userUpdateRequest) {
-        ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
                 .result(userService.changePassword(userId, userUpdateRequest))
+                .message("Change password successfully")
                 .build();
     }
 
@@ -58,6 +69,7 @@ public class UserController {
         return ApiResponse.<UserResponse>builder()
                 .code(1000)
                 .result(userService.getMyInfo())
+                .message("Get my info successfully")
                 .build();
     }
 
