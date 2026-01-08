@@ -5,6 +5,7 @@ import com.StudyMate.StudyMate.dto.request.DecksRequest;
 import com.StudyMate.StudyMate.dto.request.FlashcardsRequest;
 import com.StudyMate.StudyMate.dto.response.DecksResponse;
 import com.StudyMate.StudyMate.dto.response.FlashcardsProgressResponse;
+import com.StudyMate.StudyMate.dto.response.FlashcardsResponse;
 import com.StudyMate.StudyMate.dto.response.MediaResponse;
 import com.StudyMate.StudyMate.entity.*;
 import com.StudyMate.StudyMate.repository.DecksRepository;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,55 +64,90 @@ public class DecksServiceImpl implements DecksService {
     }
 
     @Override
-    public DecksResponse getDeckById(Long id) {
-
+    public DecksResponse getDeckById(Long deckId) {
         User user = securityUtil.getCurrentUser();
 
-        Decks decks = decksRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Deck not found"));
+        // 1. Validate & Get Deck
+        Decks deck = getDeckOrThrow(deckId);
 
-        List<Flashcards> flashcards = decks.getFlashcardsList();
+        // 2. Get & Shuffle Cards
+        List<Flashcards> cardsToLearn = getCardsToLearn(deckId, user.getId());
 
-        List<Long> ids = flashcards.stream().map(Flashcards::getId).toList();
+        // 3. Prepare Data Maps (Tối ưu query N+1)
+        List<Long> cardIds = cardsToLearn.stream().map(Flashcards::getId).toList();
+        Map<Long, FlashcardsProgress> progressMap = getProgressMap(user.getId(), cardIds);
+        Map<Long, List<Media>> mediaMap = getMediaMap(cardIds);
 
-        // Progress
-        Map<Long, FlashcardsProgress> progressMap = flashcardsProgressRepository
-                .findByUserIdAndFlashcardIdIn(user.getId(), ids)
-                .stream().collect(Collectors.toMap(
-                        p -> p.getFlashcard().getId(), p -> p
-                ));
+        // 4. Map to DTOs & Return
+        return buildDecksResponse(deck, cardsToLearn, progressMap, mediaMap);
+    }
 
-        // Media
-        Map<Long, List<Media>> mediaMap = mediaRepository
-                .findBySourceTypeAndSourceIdIn("flashcards", ids)
-                .stream().collect(Collectors.groupingBy(Media::getSourceId));
+    private Decks getDeckOrThrow(Long deckId) {
+        return decksRepository.findById(deckId)
+                .orElseThrow(() -> new RuntimeException("Deck not found with id: " + deckId));
+    }
 
-        // Build response
-        DecksResponse response = modelMapper.map(decks, DecksResponse.class);
+    private List<Flashcards> getCardsToLearn(Long deckId, Long userId) {
+        List<Flashcards> cards = flashcardsRepository.findCardsToLearn(deckId, userId);
+        Collections.shuffle(cards); // Logic random nằm gọn ở đây
+        return cards;
+    }
 
-        response.getFlashcardsList().forEach(fc -> {
+    private Map<Long, FlashcardsProgress> getProgressMap(Long userId, List<Long> cardIds) {
+        if (cardIds.isEmpty()) return Collections.emptyMap();
 
-            // --- media ---
-            List<Media> m = mediaMap.get(fc.getId());
-            if (m != null) {
-                fc.setMediaList(
-                        m.stream().map(mm -> modelMapper.map(mm, MediaResponse.class)).toList()
-                );
+        return flashcardsProgressRepository.findByUserIdAndFlashcardIdIn(userId, cardIds)
+                .stream()
+                .collect(Collectors.toMap(p -> p.getFlashcard().getId(), p -> p));
+    }
+
+    private Map<Long, List<Media>> getMediaMap(List<Long> cardIds) {
+        if (cardIds.isEmpty()) return Collections.emptyMap();
+
+        return mediaRepository.findBySourceTypeAndSourceIdIn("flashcards", cardIds)
+                .stream()
+                .collect(Collectors.groupingBy(Media::getSourceId));
+    }
+
+    private DecksResponse buildDecksResponse(Decks deck,
+                                             List<Flashcards> cards,
+                                             Map<Long, FlashcardsProgress> progressMap,
+                                             Map<Long, List<Media>> mediaMap) {
+        // Map Deck Info
+        DecksResponse response = modelMapper.map(deck, DecksResponse.class);
+
+        // Map List Flashcards
+        List<FlashcardsResponse> fcResponses = cards.stream().map(fc -> {
+            FlashcardsResponse dto = modelMapper.map(fc, FlashcardsResponse.class);
+
+            // Map Media
+            if (mediaMap.containsKey(fc.getId())) {
+                List<MediaResponse> mediaDtos = mediaMap.get(fc.getId()).stream()
+                        .map(m -> modelMapper.map(m, MediaResponse.class))
+                        .toList();
+                dto.setMediaList(mediaDtos);
             }
 
-            // --- progress ---
-            FlashcardsProgress p = progressMap.get(fc.getId());
-            if (p != null) {
-                fc.setFlashcardsProgress(modelMapper.map(p, FlashcardsProgressResponse.class));
-            } else {
-                // Flashcard NEW
-                FlashcardsProgressResponse newP = new FlashcardsProgressResponse();
-                newP.setStatus("NEW");
-                newP.setBoxNumber(1);
-                fc.setFlashcardsProgress(newP);
-            }
-        });
+            // Map Progress (Logic xử lý thẻ NEW nằm ở đây)
+            FlashcardsProgress progress = progressMap.get(fc.getId());
+            dto.setFlashcardsProgress(mapProgressToDto(progress)); // Tách nhỏ hơn nữa nếu cần
 
+            return dto;
+        }).toList();
+
+        response.setFlashcardsList(fcResponses);
         return response;
+    }
+
+    // Hàm phụ để xử lý logic Default Progress
+    private FlashcardsProgressResponse mapProgressToDto(FlashcardsProgress progress) {
+        if (progress != null) {
+            return modelMapper.map(progress, FlashcardsProgressResponse.class);
+        } else {
+            FlashcardsProgressResponse newP = new FlashcardsProgressResponse();
+            newP.setStatus("NEW");
+            newP.setBoxNumber(0);
+            return newP;
+        }
     }
 }
