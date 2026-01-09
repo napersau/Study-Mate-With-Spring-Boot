@@ -17,4 +17,5 @@ public interface FlashcardsRepository extends JpaRepository<Flashcards, Long> {
             // Điều kiện: (Chưa học bao giờ) HOẶC (Đã đến giờ ôn lại)
             "AND (p.id IS NULL OR p.nextReviewAt <= CURRENT_TIMESTAMP)")
     List<Flashcards> findCardsToLearn(@Param("deckId") Long deckId, @Param("userId") Long userId);
+    List<Flashcards> findByDeckId(Long deckId);
 }
