@@ -102,6 +102,25 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 
+//    @Bean
+//    public CorsFilter corsFilter() {
+//
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//
+//        // ✅ Cho tất cả origin (Android + Web)
+//        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("*"));
+//
+//        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+//        corsConfiguration.addAllowedHeader("*");
+//
+//        corsConfiguration.setAllowCredentials(true);
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfiguration);
+//
+//        return new CorsFilter(source);
+//    }
+
     @Bean
     JwtAuthenticationConverter jwtConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();

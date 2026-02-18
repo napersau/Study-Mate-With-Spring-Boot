@@ -18,6 +18,12 @@ public class UserGamification {
     @Id
     private Long userId;
 
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
     @Column(name = "current_streak")
     private Integer currentStreak = 0;
 
