@@ -32,12 +32,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
 
     private final UserGamificationRepository userGamificationRepository;
     private final UserStudyStatsRepository userStudyStatsRepository;
-    private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
     private final SecurityUtil securityUtil;
 
     @Override
     public void recordDailyActivity(Long userId) {
+
+        User user = securityUtil.getCurrentUser();
+
         // Lấy thời điểm đầu ngày hôm nay (UTC)
         Instant todayStart = Instant.now().truncatedTo(ChronoUnit.DAYS);
 
@@ -45,7 +46,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         UserGamification gamification = userGamificationRepository.findById(userId)
                 .orElseGet(() -> {
                     UserGamification newGam = UserGamification.builder()
-                            .user(userRepository.getReferenceById(userId))
+                            .user(user)
                             .currentStreak(0)
                             .longestStreak(0)
                             .build();
@@ -78,7 +79,7 @@ public class AnalyticsServiceImpl implements AnalyticsService {
         // 4. Ghi log vào bảng Stats (để vẽ biểu đồ)
         if (userStudyStatsRepository.findByUserIdAndStudyDate(userId, todayStart).isEmpty()) {
             UserStudyStats newStats = UserStudyStats.builder()
-                    .user(userRepository.getReferenceById(userId))
+                    .user(user)
                     .studyDate(todayStart)
                     .durationSeconds(1L) // Đánh dấu là có học
                     .build();

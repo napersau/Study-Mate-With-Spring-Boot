@@ -37,5 +37,9 @@ export const API = {
   DECKS: "/decks",
   GET_ALL_DECKS: "/decks/all",
   GET_DECK: (id) => `/decks/${id}`,
+
+  // Analytics
+  ANALYTICS_GAMIFICATION: "/analytics",
+  ANALYTICS_STUDY_STATS: (days) => `/analytics/stats?days=${days}`,
   
 };

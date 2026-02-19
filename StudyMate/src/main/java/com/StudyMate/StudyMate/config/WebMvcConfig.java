@@ -14,7 +14,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(activityTrackingInterceptorConfig)
-                .addPathPatterns("/api/**") // Áp dụng cho mọi API bắt đầu bằng /api
-                .excludePathPatterns("/api/auth/**", "/api/public/**"); // Trừ API login/register
+                .addPathPatterns("/api/v1/**") // Áp dụng cho mọi API bắt đầu bằng /api
+                .excludePathPatterns("/api/v1/auth/**", "/api/v1/public/**"); // Trừ API login/register
     }
 }

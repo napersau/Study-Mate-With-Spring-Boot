@@ -16,14 +16,14 @@ import java.time.Instant;
 @Builder
 public class UserStudyStats {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "course_id", nullable = false)
+    @Column(name = "study_date", nullable = false)
     private Instant studyDate;
 
     @Column(name = "duration_seconds")

@@ -20,6 +20,7 @@ import Courses from "../pages/courses";
 import CourseDetail from "../pages/courseDetail";
 import CourseAdmin from "../pages/courseAdmin";
 import ExamAdmin from "../pages/examAdmin";
+import ProfilePage from "../pages/profile";
 
 const Routes = [
   {
@@ -54,6 +55,7 @@ const Routes = [
           { path: "exams/:examId", element: <ExamDetail /> },
           { path: "courses", element: <Courses /> },
           { path: "courses/:courseId", element: <CourseDetail /> },
+          { path: "profile", element: <ProfilePage /> },
         ],
       },
 
