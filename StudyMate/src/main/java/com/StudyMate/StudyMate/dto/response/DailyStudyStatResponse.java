@@ -10,4 +10,5 @@ import java.time.LocalDate;
 public class DailyStudyStatResponse {
     private LocalDate date;      // Ngày (VD: 2024-02-18)
     private boolean hasLearned;  // true: có học, false: không học
+    private Long durationSeconds;
 }

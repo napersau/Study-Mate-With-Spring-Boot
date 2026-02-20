@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import useDeckDetail from './useDeckDetail';
 import flashcardsProgressService from '../../service/flashcardsProgressService';
+import useStudyTimer from '../../hooks/useStudyTimer';
 
 const DeckDetail = () => {
   const { id } = useParams();
@@ -11,6 +12,10 @@ const DeckDetail = () => {
   const [updating, setUpdating] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Tự động đếm thời gian học flashcard, gửi lên server khi rời trang
+  useStudyTimer();
+
+  console.log("Deck detail:", deck);
   const flashcards = deck?.flashcardsList || [];
   const current = flashcards[index] || null;
 

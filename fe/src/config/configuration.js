@@ -41,5 +41,6 @@ export const API = {
   // Analytics
   ANALYTICS_GAMIFICATION: "/analytics",
   ANALYTICS_STUDY_STATS: (days) => `/analytics/stats?days=${days}`,
+  ANALYTICS_RECORD_STUDY_TIME: "/analytics/study-time",
   
 };

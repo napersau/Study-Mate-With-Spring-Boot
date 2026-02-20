@@ -34,3 +34,22 @@ export const getStudyStats = async (days = 7) => {
     throw error;
   }
 };
+
+/**
+ * Record study time for the current user
+ * POST /api/v1/analytics/study-time
+ * @param {number} seconds - number of seconds spent studying
+ */
+export const recordStudyTime = async (seconds) => {
+  try {
+    const response = await httpClient.post(
+      API.ANALYTICS_RECORD_STUDY_TIME,
+      { seconds },
+      authHeader()
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error recording study time:", error);
+    throw error;
+  }
+};

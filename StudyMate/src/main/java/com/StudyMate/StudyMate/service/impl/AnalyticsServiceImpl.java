@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -113,33 +114,104 @@ public class AnalyticsServiceImpl implements AnalyticsService {
     public List<DailyStudyStatResponse> getStudyStats(int lastDays) {
         Long userId = securityUtil.getCurrentUser().getId();
 
-        // Tính ngày bắt đầu (Ví dụ: Lấy 7 ngày trước)
+        // Tính ngày bắt đầu
         Instant startDate = Instant.now().minus(lastDays, ChronoUnit.DAYS).truncatedTo(ChronoUnit.DAYS);
 
         // Lấy danh sách các ngày ĐÃ HỌC từ DB
         List<UserStudyStats> learnedStats = userStudyStatsRepository.findByUserIdAndStudyDateAfterOrderByStudyDateAsc(userId, startDate);
 
-        // Tạo danh sách kết quả đầy đủ cho 'lastDays' ngày (kể cả ngày không học)
         List<DailyStudyStatResponse> responseList = new ArrayList<>();
 
-        // Set chứa các ngày đã học để tra cứu cho nhanh
-        Set<Instant> learnedDates = learnedStats.stream()
-                .map(UserStudyStats::getStudyDate)
-                .collect(Collectors.toSet());
+        // TỐI ƯU MỚI: Dùng Map để lưu trữ cặp <Ngày, Tổng số giây>
+        Map<Instant, Long> dailyDurationMap = learnedStats.stream()
+                .collect(Collectors.toMap(
+                        UserStudyStats::getStudyDate,
+                        // Lấy số giây, nếu null thì mặc định là 0
+                        stats -> stats.getDurationSeconds() != null ? stats.getDurationSeconds() : 0L,
+                        // Nếu lỡ trong DB có 2 record trùng ngày (do lỗi nào đó), thì cộng gộp chúng lại
+                        Long::sum
+                ));
 
         // Vòng lặp từ ngày bắt đầu đến hôm nay để điền dữ liệu
-        for (int i = 0; i < lastDays; i++) {
+        for (int i = 0; i <= lastDays; i++) { // Sửa nhẹ thành i <= lastDays để lấy trọn vẹn cả ngày hôm nay
             Instant checkDate = startDate.plus(i, ChronoUnit.DAYS);
-
-            // Convert Instant sang LocalDate để trả về cho đẹp
             LocalDate localDate = checkDate.atZone(ZoneId.systemDefault()).toLocalDate();
+
+            // Lấy thời gian học từ Map. Nếu ngày đó không có trong Map -> trả về 0L
+            Long duration = dailyDurationMap.getOrDefault(checkDate, 0L);
 
             responseList.add(DailyStudyStatResponse.builder()
                     .date(localDate)
-                    .hasLearned(learnedDates.contains(checkDate)) // true nếu ngày đó có trong DB
+                    // Có học nếu tồn tại trong DB hoặc số giây > 0
+                    .hasLearned(dailyDurationMap.containsKey(checkDate) || duration > 0)
+                    .durationSeconds(duration) // Gắn thời gian học vào đây
                     .build());
         }
 
         return responseList;
+    }
+
+    @Override
+    public void recordStudyTime(Long seconds) {
+        User user = securityUtil.getCurrentUser();
+        Instant todayStart = Instant.now().truncatedTo(ChronoUnit.DAYS);
+
+        // Chặn gian lận: Nếu FE gửi số giây > 24 tiếng (86400s) thì lờ đi hoặc cap lại.
+        if (seconds > 86400L) {
+            seconds = 86400L;
+        }
+
+        // 2.1 Cập nhật bảng Study Stats (Cộng dồn giây)
+        UserStudyStats stats = userStudyStatsRepository.findByUserIdAndStudyDate(user.getId(), todayStart)
+                .orElseGet(() -> UserStudyStats.builder()
+                        .user(user)
+                        .studyDate(todayStart)
+                        .durationSeconds(0L)
+                        .build());
+
+        // Cộng dồn thời gian cũ + mới
+        stats.setDurationSeconds(stats.getDurationSeconds() + seconds);
+        userStudyStatsRepository.save(stats);
+
+        // 2.2 Đảm bảo Streak được cập nhật (phòng hờ user học xuyên đêm qua ngày mới)
+        updateGamificationStreak(user, todayStart);
+    }
+
+    private void updateGamificationStreak(User user, Instant todayStart) {
+        UserGamification gamification;
+        try {
+            gamification = userGamificationRepository.findById(user.getId()).orElse(null);
+            if (gamification == null) {
+                UserGamification newGam = UserGamification.builder()
+                        .user(user)
+                        .currentStreak(0)
+                        .longestStreak(0)
+                        .build();
+                gamification = userGamificationRepository.save(newGam);
+                userGamificationRepository.flush(); // Xử lý deadlock
+            }
+        } catch (Exception e) {
+            gamification = userGamificationRepository.findById(user.getId()).orElse(null);
+            if (gamification == null) return;
+        }
+
+        if (todayStart.equals(gamification.getLastLearnDate())) {
+            return; // Hôm nay đã update streak rồi
+        }
+
+        Instant yesterdayStart = todayStart.minus(1, ChronoUnit.DAYS);
+
+        if (yesterdayStart.equals(gamification.getLastLearnDate())) {
+            gamification.setCurrentStreak(gamification.getCurrentStreak() + 1);
+        } else {
+            gamification.setCurrentStreak(1);
+        }
+
+        if (gamification.getCurrentStreak() > gamification.getLongestStreak()) {
+            gamification.setLongestStreak(gamification.getCurrentStreak());
+        }
+
+        gamification.setLastLearnDate(todayStart);
+        userGamificationRepository.save(gamification);
     }
 }

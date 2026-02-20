@@ -12,6 +12,7 @@ import {
     FileText
 } from 'lucide-react';
 import courseService from '../../service/courseService';
+import useStudyTimer from '../../hooks/useStudyTimer';
 
 const CourseDetail = () => {
     const { courseId } = useParams();
@@ -19,6 +20,9 @@ const CourseDetail = () => {
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Tự động đếm thời gian học khóa học, gửi lên server khi rời trang
+    useStudyTimer();
 
     useEffect(() => {
         fetchCourseDetail();

@@ -5,8 +5,8 @@ import { getUserGamification, getStudyStats } from "../../service/analyticsServi
 const useProfileHook = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [gamification, setGamification] = useState(null);
-  const [studyStats, setStudyStats] = useState([]);
-  const [statsDays, setStatsDays] = useState(7);
+  const [studyStats, setStudyStats] = useState([]);  // [{ date: "YYYY-MM-DD", hasLearned: bool }]
+  const [statsDays, setStatsDays] = useState(30);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -51,15 +51,17 @@ const useProfileHook = () => {
     fetchStudyStats(statsDays);
   }, [statsDays, fetchStudyStats]);
 
-  const changeStatsDays = (days) => {
-    setStatsDays(days);
-  };
+  const changeStatsDays = (days) => setStatsDays(days);
+
+  // Derived: how many unique days the user actually studied
+  const totalStudiedDays = studyStats.filter((s) => s.hasLearned).length;
 
   return {
     userInfo,
     gamification,
     studyStats,
     statsDays,
+    totalStudiedDays,
     loading,
     statsLoading,
     error,

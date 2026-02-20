@@ -10,5 +10,5 @@ public interface AnalyticsService {
     void recordDailyActivity(Long userId);
     UserGamificationResponse getUserGamification();
     List<DailyStudyStatResponse> getStudyStats(int lastDays);
-
+    void recordStudyTime(Long seconds);
 }

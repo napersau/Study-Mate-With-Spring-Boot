@@ -13,10 +13,14 @@ import {
     Award
 } from 'lucide-react';
 import examService from '../../service/examService';
+import useStudyTimer from '../../hooks/useStudyTimer';
 
 const ExamDetail = () => {
     const { examId } = useParams();
     const navigate = useNavigate();
+
+    // Đếm thời gian làm bài thi; gọi stopAndSubmit() khi nộp bài
+    const { stopAndSubmit: submitStudyTime } = useStudyTimer();
     
     const [exam, setExam] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -74,8 +78,10 @@ const ExamDetail = () => {
         }));
     };
 
-    const handleSubmitExam = () => {
+    const handleSubmitExam = async () => {
         setIsTimerRunning(false);
+        // Ghi nhận thời gian làm bài trước khi hiển thị kết quả
+        await submitStudyTime();
         setShowResults(true);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Eye } from 'lucide-react';
 import documentService from '../../service/documentService';
 import QuickTranslator from '../../components/QuickTranslator';
+import useStudyTimer from '../../hooks/useStudyTimer';
 
 const DocumentDetail = () => {
     const { category, documentId } = useParams();
@@ -10,6 +11,9 @@ const DocumentDetail = () => {
     const [document, setDocument] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    // Tự động đếm thời gian học tài liệu, gửi lên server khi rời trang
+    useStudyTimer();
 
     useEffect(() => {
         const fetchDocument = async () => {
