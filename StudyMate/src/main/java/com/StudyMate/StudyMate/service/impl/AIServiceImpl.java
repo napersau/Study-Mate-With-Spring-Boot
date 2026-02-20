@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -66,9 +69,35 @@ public class AIServiceImpl implements AIService {
 
     @Override
     public String translateText(String text) {
-        return chatWithAI(
-                "Translate the following text into Vietnamese: " + text
-        );
+        try {
+            // 1. Phải encode (mã hóa) text để chuyển các dấu cách, ký tự đặc biệt thành định dạng URL hợp lệ
+            String encodedText = URLEncoder.encode(text, StandardCharsets.UTF_8.toString());
+
+            // 2. Tạo URL gọi MyMemory API (en|vi là Anh -> Việt)
+            // MẸO: Thêm tham số &de=email_cua_ban@gmail.com để được nâng hạn mức lên 10.000 từ/ngày miễn phí!
+            String url = "https://api.mymemory.translated.net/get?q=" + encodedText + "&langpair=en|vi";
+
+            log.info("Calling MyMemory Translation API: {}", url);
+
+            // 3. Gọi API (Dùng phương thức GET)
+            ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
+            Map<String, Object> body = response.getBody();
+
+            // 4. Bóc tách JSON để lấy chữ đã dịch
+            if (body != null && body.containsKey("responseData")) {
+                Map<String, Object> responseData = (Map<String, Object>) body.get("responseData");
+                String translatedResult = (String) responseData.get("translatedText");
+
+                return translatedResult;
+            }
+
+            return "Không thể dịch (Lỗi trích xuất dữ liệu)";
+
+        } catch (Exception e) {
+            log.error("Lỗi khi gọi MyMemory API: ", e);
+            // Xử lý fallback: Nếu API sập, có thể trả về chính chữ gốc hoặc báo lỗi
+            return "Lỗi dịch thuật: " + e.getMessage();
+        }
     }
 
     @Override
