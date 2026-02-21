@@ -21,6 +21,7 @@ import CourseDetail from "../pages/courseDetail";
 import CourseAdmin from "../pages/courseAdmin";
 import ExamAdmin from "../pages/examAdmin";
 import ProfilePage from "../pages/profile";
+import PaymentSuccess from "../pages/paymentSuccess";
 
 const Routes = [
   {
@@ -39,6 +40,11 @@ const Routes = [
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        // VNPay redirect về URL này sau khi thanh toán
+        path: "payment-success",
+        element: <PaymentSuccess />,
       },
 
       // Các route yêu cầu đăng nhập

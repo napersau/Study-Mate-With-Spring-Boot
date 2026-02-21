@@ -1,51 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
     ArrowLeft, 
     BookOpen, 
     Users,
-    Award,
     DollarSign,
-    Clock,
     CheckCircle,
     PlayCircle,
-    FileText
+    FileText,
+    ShoppingCart,
+    Loader2,
+    Lock,
 } from 'lucide-react';
-import courseService from '../../service/courseService';
 import useStudyTimer from '../../hooks/useStudyTimer';
+import useCourseDetail from './useCourseDetail';
 
 const CourseDetail = () => {
-    const { courseId } = useParams();
     const navigate = useNavigate();
-    const [course, setCourse] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     // Tự động đếm thời gian học khóa học, gửi lên server khi rời trang
     useStudyTimer();
 
-    useEffect(() => {
-        fetchCourseDetail();
-    }, [courseId]);
-
-    const fetchCourseDetail = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const response = await courseService.getCourseById(courseId);
-            
-            if (response.code === 1000) {
-                setCourse(response.result);
-            } else {
-                setError(response.message || 'Không thể tải thông tin khóa học');
-            }
-        } catch (err) {
-            console.error('Error fetching course:', err);
-            setError('Có lỗi xảy ra khi tải thông tin khóa học');
-        } finally {
-            setLoading(false);
-        }
-    };
+    const {
+        course,
+        loading,
+        error,
+        paying,
+        payError,
+        isFree,
+        isEnrolled,
+        handlePayVnPay,
+    } = useCourseDetail();
 
     if (loading) {
         return (
@@ -151,14 +136,60 @@ const CourseDetail = () => {
                         <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
                     </div>
 
-                    {/* Enroll Button Section */}
+                    {/* Enroll / Pay Button Section */}
                     <div className="p-8 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800">
-                        <button
-                            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg py-4 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
-                        >
-                            <PlayCircle className="w-6 h-6" />
-                            <span>Đăng ký khóa học ngay</span>
-                        </button>
+                        {payError && (
+                            <div className="mb-4 bg-red-100 border-l-4 border-red-500 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-4 py-3 rounded-lg text-sm font-medium">
+                                {payError}
+                            </div>
+                        )}
+
+                        {isEnrolled ? (
+                            /* Đã sở hữu → Học ngay */
+                            <button
+                                onClick={() => navigate('/home')}
+                                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg py-4 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                            >
+                                <PlayCircle className="w-6 h-6" />
+                                <span>Tiếp tục học khóa học</span>
+                            </button>
+                        ) : isFree ? (
+                            /* Miễn phí → Đăng ký ngay */
+                            <button
+                                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-lg py-4 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                            >
+                                <PlayCircle className="w-6 h-6" />
+                                <span>Đăng ký miễn phí ngay</span>
+                            </button>
+                        ) : (
+                            /* Có phí → Thanh toán VNPay */
+                            <div className="space-y-3">
+                                <button
+                                    onClick={handlePayVnPay}
+                                    disabled={paying}
+                                    className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold text-lg py-4 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                >
+                                    {paying ? (
+                                        <>
+                                            <Loader2 className="w-6 h-6 animate-spin" />
+                                            <span>Đang kết nối VNPay...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShoppingCart className="w-6 h-6" />
+                                            <span>
+                                                Mua khóa học &nbsp;—&nbsp;
+                                                {course.price?.toLocaleString('vi-VN')}đ
+                                            </span>
+                                        </>
+                                    )}
+                                </button>
+                                <p className="flex items-center justify-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                                    <Lock className="w-3 h-3" />
+                                    Thanh toán an toàn qua cổng VNPay
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
 
