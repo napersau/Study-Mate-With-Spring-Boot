@@ -34,13 +34,16 @@ public class Course {
     @Column(name = "image_url")
     private String imageUrl; // Ảnh bìa khóa học
 
+    @Column(name = "level")
     private String level; // Trình độ (Beginner, Intermediate...)
 
     @Column(name = "total_students")
     private Integer totalStudents = 0; // Đếm số người học
 
+    @Column(name = "rating")
     private Double rating; // Đánh giá trung bình (4.5 sao)
 
+    @Column(name = "is_published")
     private Boolean isPublished; // True: Đang mở bán, False: Bản nháp
 
     // Quan hệ: 1 Khóa học có nhiều Chương

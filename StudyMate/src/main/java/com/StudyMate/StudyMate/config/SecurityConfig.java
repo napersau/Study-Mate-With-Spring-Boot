@@ -89,39 +89,39 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-    @Bean
-    public CorsFilter corsFilter() {
-
-        CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
-        corsConfiguration.addAllowedHeader("*");
-        corsConfiguration.setAllowCredentials(true); // Cho phép gửi credentials (JWT)
-
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfiguration);
-        return new CorsFilter(source);
-    }
-
 //    @Bean
 //    public CorsFilter corsFilter() {
 //
 //        CorsConfiguration corsConfiguration = new CorsConfiguration();
-//
-//        // ✅ Cho tất cả origin (Android + Web)
-//        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("*"));
-//
+//        corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
 //        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
 //        corsConfiguration.addAllowedHeader("*");
+//        corsConfiguration.setAllowCredentials(true); // Cho phép gửi credentials (JWT)
 //
-//        corsConfiguration.setAllowCredentials(true);
 //
 //        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 //        source.registerCorsConfiguration("/**", corsConfiguration);
-//
 //        return new CorsFilter(source);
 //    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+
+        // ✅ Cho tất cả origin (Android + Web)
+        corsConfiguration.setAllowedOriginPatterns(Collections.singletonList("*"));
+
+        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+        corsConfiguration.addAllowedHeader("*");
+
+        corsConfiguration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", corsConfiguration);
+
+        return new CorsFilter(source);
+    }
 
     @Bean
     JwtAuthenticationConverter jwtConverter() {
