@@ -44,10 +44,7 @@ const useCourseDetail = () => {
             setPaying(true);
             setPayError(null);
 
-            const response = await paymentService.createVnPayPayment(
-                course.price,
-                courseId,
-            );
+            const response = await paymentService.createVnPayPayment(courseId);
 
             if (response && response.result && response.result.paymentUrl) {
                 // Chuyển hướng sang cổng VNPay

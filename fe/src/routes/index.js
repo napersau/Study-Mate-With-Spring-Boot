@@ -22,6 +22,7 @@ import CourseAdmin from "../pages/courseAdmin";
 import ExamAdmin from "../pages/examAdmin";
 import ProfilePage from "../pages/profile";
 import PaymentSuccess from "../pages/paymentSuccess";
+import OrderHistory from "../pages/orderHistory";
 
 const Routes = [
   {
@@ -62,6 +63,7 @@ const Routes = [
           { path: "courses", element: <Courses /> },
           { path: "courses/:courseId", element: <CourseDetail /> },
           { path: "profile", element: <ProfilePage /> },
+          { path: "order-history", element: <OrderHistory /> },
         ],
       },
 

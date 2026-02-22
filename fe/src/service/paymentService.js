@@ -4,18 +4,15 @@ import { getToken } from './localStorageService';
 const paymentService = {
     /**
      * Tạo URL thanh toán VNPay cho khóa học.
-     * Backend đọc các param qua HttpServletRequest nên truyền qua query string.
-     * @param {number} amount - Số tiền (VND)
-     * @param {string|number} courseId - ID khóa học
-     * @param {string} bankCode - Mã ngân hàng (rỗng = để VNPay hiển thị tất cả)
+     * @param {string|number} courseId - ID khóa học (bắt buộc)
+     * @param {string} platform - Nền tảng ('web' | 'mobile'), mặc định 'web'
      */
-    createVnPayPayment: async (amount, courseId, bankCode = '') => {
+    createVnPayPayment: async (courseId, platform = 'web') => {
         try {
             const response = await httpClient.get('/payment/vn-pay', {
                 params: {
-                    amount,
                     courseId,
-                    bankCode,
+                    platform,
                 },
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
@@ -35,6 +32,40 @@ const paymentService = {
         try {
             const response = await httpClient.get('/payment/vn-pay-callback', {
                 params,
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    /**
+     * Xử lý thanh toán thành công – cập nhật order và mở khóa course.
+     * @param {string} vnpTxnRef - Mã giao dịch VNPay (vnp_TxnRef)
+     */
+    processPayment: async (vnpTxnRef) => {
+        try {
+            const response = await httpClient.post('/order/process-payment', null, {
+                params: { vnpTxnRef },
+                headers: {
+                    Authorization: `Bearer ${getToken()}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    /**
+     * Lấy danh sách lịch sử giao dịch của người dùng hiện tại.
+     */
+    getAllOrders: async () => {
+        try {
+            const response = await httpClient.get('/order/list', {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
                 },
