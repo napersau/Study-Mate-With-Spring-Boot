@@ -3,19 +3,27 @@ import { getToken } from './localStorageService';
 
 const paymentService = {
     /**
-     * Tạo URL thanh toán VNPay cho khóa học.
-     * @param {string|number} courseId - ID khóa học (bắt buộc)
-     * @param {string} platform - Nền tảng ('web' | 'mobile'), mặc định 'web'
+     * Tạo URL thanh toán VNPay.
+     * @param {number} amount - Số tiền cần thanh toán (VND)
+     * @param {string|number} courseId - ID khóa học
+     * @param {string} [bankCode=''] - Mã ngân hàng (tùy chọn)
+     * @param {string} [language='vn'] - Ngôn ngữ (tùy chọn)
      */
-    createVnPayPayment: async (courseId, platform = 'web') => {
+    createVnPayPayment: async (amount, courseId, bankCode = '', language = 'vn') => {
+        const token = getToken();
+        if (!token) {
+            throw new Error('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.');
+        }
         try {
             const response = await httpClient.get('/payment/vn-pay', {
                 params: {
+                    amount,
                     courseId,
-                    platform,
+                    bankCode,
+                    language,
                 },
                 headers: {
-                    Authorization: `Bearer ${getToken()}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
             return response.data;

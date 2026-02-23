@@ -12,8 +12,8 @@ import java.time.Instant;
 @Data
 public class OrderResponse {
     private Long id;
-    private User user; // Ai mua?
-    private Course course; // Mua khóa nào?
+    private String username;
+    private String courseTitle;
     private String vnpTxnRef; // Mã giao dịch gửi sang VNPay (bắt buộc để đối soát)
     private Double amount;
     private String status;

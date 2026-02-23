@@ -46,6 +46,17 @@ public class OrderServiceImpl implements OrderService {
         order.setPayDate(Instant.now());
         orderRepository.save(order);
 
+        Order order1 = Order.builder()
+                .status("PAID")
+                .vnpTxnRef(vnpTxnRef)
+                .amount(order.getAmount())
+                .user(order.getUser())
+                .course(order.getCourse())
+                .payDate(Instant.now())
+                .createdDate(Instant.now())
+                .build();
+        orderRepository.save(order);
+
         // Bước 2: Cấp quyền truy cập khóa học cho User (Thêm vào bảng UserCourse)
         Enrollment enrollment = Enrollment.builder()
                 .user(order.getUser())
@@ -69,7 +80,20 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.findByUserId(user.getId());
 
         return orders.stream()
-                .map(order -> modelMapper.map(order, OrderResponse.class))
+                .map(order -> {
+                    // 1. Nhờ ModelMapper map các trường giống tên (id, status, amount...)
+                    OrderResponse response = modelMapper.map(order, OrderResponse.class);
+
+                    // 2. Tự map thủ công các trường bị lồng (nested)
+                    if (order.getUser() != null) {
+                        response.setUsername(order.getUser().getUsername());
+                    }
+                    if (order.getCourse() != null) {
+                        response.setCourseTitle(order.getCourse().getTitle());
+                    }
+
+                    return response;
+                })
                 .toList();
     }
 }

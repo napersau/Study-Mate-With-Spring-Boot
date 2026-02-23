@@ -44,7 +44,7 @@ const useCourseDetail = () => {
             setPaying(true);
             setPayError(null);
 
-            const response = await paymentService.createVnPayPayment(courseId);
+            const response = await paymentService.createVnPayPayment(course.price, courseId);
 
             if (response && response.result && response.result.paymentUrl) {
                 // Chuyển hướng sang cổng VNPay
@@ -53,8 +53,17 @@ const useCourseDetail = () => {
                 setPayError('Không thể tạo liên kết thanh toán. Vui lòng thử lại.');
             }
         } catch (err) {
-            console.error('Payment error:', err);
-            setPayError('Có lỗi xảy ra khi khởi tạo thanh toán.');
+            // Log chi tiết response từ backend để debug
+            console.error('Payment error - backend response data:', err?.response?.data);
+            console.error('Payment error - status:', err?.response?.status);
+            console.error('Payment error full:', err);
+            // Lấy message thực từ backend (nếu có)
+            const backendMsg =
+                err?.response?.data?.message ||
+                err?.response?.data?.result ||
+                err?.message ||
+                'Có lỗi xảy ra khi khởi tạo thanh toán.';
+            setPayError(backendMsg);
         } finally {
             setPaying(false);
         }

@@ -17,21 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private final PaymentService paymentService;
     @GetMapping("/vn-pay")
-    public ApiResponse<PaymentDTO.VNPayResponse> pay(
-            @RequestParam Long courseId, // BẮT BUỘC: Phải biết mua khóa học nào
-            @RequestParam(defaultValue = "web") String platform, // Tùy chọn nền tảng
-            HttpServletRequest request) {
-
+    public ApiResponse<PaymentDTO.VNPayResponse> pay(HttpServletRequest request) {
         ApiResponse<PaymentDTO.VNPayResponse> apiResponse = new ApiResponse<>();
         apiResponse.setCode(HttpStatus.OK.value());
         apiResponse.setMessage(HttpStatus.OK.getReasonPhrase());
-
-        // Truyền courseId và platform xuống Service
-        apiResponse.setResult(paymentService.createVnPayPayment(request, courseId, platform));
+        apiResponse.setResult(paymentService.createVnPayPayment(request));
         return apiResponse;
     }
-
-
     @GetMapping("/vn-pay-callback")
     public ApiResponse<PaymentDTO.VNPayResponse> payCallbackHandler(HttpServletRequest request) {
         String status = request.getParameter("vnp_ResponseCode");
