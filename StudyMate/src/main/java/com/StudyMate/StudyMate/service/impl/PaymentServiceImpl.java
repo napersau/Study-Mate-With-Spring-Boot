@@ -65,6 +65,13 @@ public class PaymentServiceImpl implements PaymentService {
         long amountInVnd = (long) (course.getPrice() * 100L);
         vnpParamsMap.put("vnp_Amount", String.valueOf(amountInVnd));
 
+        String returnUrl = vnPayConfig.getVnp_ReturnUrl(); // Mặc định lấy localhost:3000 từ application.yml
+        if ("android".equalsIgnoreCase(request.getParameter("platform"))) {
+            // Nếu là Android, đổi URL trả về thành Deep Link của App
+            returnUrl = "studymate://payment-success";
+        }
+        vnpParamsMap.put("vnp_ReturnUrl", returnUrl);
+
         // 4. Các tham số khác
         String bankCode = request.getParameter("bankCode");
         if (bankCode != null && !bankCode.isEmpty()) {

@@ -9,7 +9,7 @@ const paymentService = {
      * @param {string} [bankCode=''] - Mã ngân hàng (tùy chọn)
      * @param {string} [language='vn'] - Ngôn ngữ (tùy chọn)
      */
-    createVnPayPayment: async (amount, courseId, method = 'web', bankCode = '', language = 'vn') => {
+    createVnPayPayment: async (amount, courseId, platform = 'web', bankCode = '', language = 'vn') => {
         const token = getToken();
         if (!token) {
             throw new Error('Bạn chưa đăng nhập. Vui lòng đăng nhập để tiếp tục.');

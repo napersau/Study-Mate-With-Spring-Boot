@@ -2,6 +2,7 @@ package com.StudyMate.StudyMate.controller;
 
 import com.StudyMate.StudyMate.dto.PaymentDTO;
 import com.StudyMate.StudyMate.dto.response.ApiResponse;
+import com.StudyMate.StudyMate.dto.response.CourseResponse;
 import com.StudyMate.StudyMate.service.PaymentService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,15 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/payment")
 @RequiredArgsConstructor
 public class PaymentController {
+
     private final PaymentService paymentService;
+
     @GetMapping("/vn-pay")
     public ApiResponse<PaymentDTO.VNPayResponse> pay(HttpServletRequest request) {
-        ApiResponse<PaymentDTO.VNPayResponse> apiResponse = new ApiResponse<>();
-        apiResponse.setCode(HttpStatus.OK.value());
-        apiResponse.setMessage(HttpStatus.OK.getReasonPhrase());
-        apiResponse.setResult(paymentService.createVnPayPayment(request));
-        return apiResponse;
+        return ApiResponse.<PaymentDTO.VNPayResponse>builder()
+                .result(paymentService.createVnPayPayment(request))
+                .code(HttpStatus.OK.value())
+                .message(HttpStatus.OK.getReasonPhrase())
+                .build();
     }
+
     @GetMapping("/vn-pay-callback")
     public ApiResponse<PaymentDTO.VNPayResponse> payCallbackHandler(HttpServletRequest request) {
         String status = request.getParameter("vnp_ResponseCode");
