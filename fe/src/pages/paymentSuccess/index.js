@@ -8,12 +8,14 @@ import {
     Loader2,
     ArrowRight,
 } from 'lucide-react';
+import paymentService from '../../service/paymentService';
 
 const PaymentSuccess = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [status, setStatus] = useState('loading'); // 'loading' | 'success' | 'failed'
     const [info, setInfo] = useState({});
+    const [processError, setProcessError] = useState(null);
 
     useEffect(() => {
         const responseCode = searchParams.get('vnp_ResponseCode');
@@ -31,8 +33,15 @@ const PaymentSuccess = () => {
             transactionNo,
         });
 
-        if (responseCode === '00') {
-            setStatus('success');
+        if (responseCode === '00' && txnRef) {
+            // Gọi backend cập nhật trạng thái order và mở khóa course
+            paymentService.processPayment(txnRef)
+                .then(() => setStatus('success'))
+                .catch((err) => {
+                    console.error('processPayment error:', err);
+                    setProcessError('Thanh toán thành công nhưng không thể cập nhật đơn hàng. Vui lòng liên hệ hỗ trợ.');
+                    setStatus('success'); // vẫn hiển thị success vì VNPay đã thu tiền
+                });
         } else {
             setStatus('failed');
         }
@@ -68,6 +77,13 @@ const PaymentSuccess = () => {
                         ? 'Khóa học đã được mở khóa. Chúc bạn học tốt!'
                         : 'Giao dịch không thành công. Vui lòng thử lại.'}
                 </p>
+
+                {/* Warning nếu process-payment lỗi */}
+                {processError && (
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-xl p-4 mb-6 text-sm text-yellow-700 dark:text-yellow-300 text-left">
+                        ⚠️ {processError}
+                    </div>
+                )}
 
                 {/* Transaction Info */}
                 {(info.txnRef || info.amount || info.transactionNo) && (

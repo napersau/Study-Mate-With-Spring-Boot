@@ -3,8 +3,11 @@ package com.StudyMate.StudyMate.service.impl;
 import com.StudyMate.StudyMate.dto.request.CourseRequest;
 import com.StudyMate.StudyMate.dto.response.CourseResponse;
 import com.StudyMate.StudyMate.entity.Course;
+import com.StudyMate.StudyMate.entity.User;
 import com.StudyMate.StudyMate.repository.CourseRepository;
+import com.StudyMate.StudyMate.repository.EnrollmentRepository;
 import com.StudyMate.StudyMate.service.CourseService;
+import com.StudyMate.StudyMate.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
+    private final EnrollmentRepository enrollmentRepository;
+    private final SecurityUtil securityUtil;
 
     @Override
     public CourseResponse createCourse(CourseRequest courseRequest) {
@@ -28,6 +33,7 @@ public class CourseServiceImpl implements CourseService {
                 .description(courseRequest.getDescription())
                 .price(courseRequest.getPrice())
                 .level(courseRequest.getLevel())
+                .totalStudents(0)
                 .build();
 
         courseRepository.save(course);
@@ -38,9 +44,14 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse getCourseById(Long id) {
 
-        Course course = courseRepository.findById(id).orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+        User user = securityUtil.getCurrentUser();
 
-        return modelMapper.map(course, CourseResponse.class);
+        Course course = courseRepository.findById(id).orElseThrow(() -> new RuntimeException("Course not found with id: " + id));
+        Boolean isEnrolled = enrollmentRepository.existsByUserIdAndCourseId(user.getId(), course.getId());
+
+        CourseResponse courseResponse = modelMapper.map(course, CourseResponse.class);
+        courseResponse.setIsEnrolled(isEnrolled);
+        return courseResponse;
     }
 
     @Override

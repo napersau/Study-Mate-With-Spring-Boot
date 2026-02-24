@@ -4,7 +4,7 @@ import courseService from '../../service/courseService';
 import paymentService from '../../service/paymentService';
 
 const useCourseDetail = () => {
-    const { courseId } = useParams();
+    const {courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);

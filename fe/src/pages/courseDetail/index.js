@@ -145,14 +145,22 @@ const CourseDetail = () => {
                         )}
 
                         {isEnrolled ? (
-                            /* Đã sở hữu → Học ngay */
-                            <button
-                                onClick={() => navigate('/home')}
-                                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg py-4 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
-                            >
-                                <PlayCircle className="w-6 h-6" />
-                                <span>Tiếp tục học khóa học</span>
-                            </button>
+                            /* Đã sở hữu → Truy cập khóa học */
+                            <div className="space-y-3">
+                                <div className="flex items-center justify-center gap-2 mb-3">
+                                    <CheckCircle className="w-5 h-5 text-green-500" />
+                                    <span className="text-green-600 dark:text-green-400 font-semibold text-sm">
+                                        Bạn đã sở hữu khóa học này
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => navigate(`/courses/${course.id}/learn`)}
+                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold text-lg py-4 rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-3"
+                                >
+                                    <PlayCircle className="w-6 h-6" />
+                                    <span>Truy cập khóa học</span>
+                                </button>
+                            </div>
                         ) : isFree ? (
                             /* Miễn phí → Đăng ký ngay */
                             <button

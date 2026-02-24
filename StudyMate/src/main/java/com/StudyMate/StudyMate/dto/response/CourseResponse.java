@@ -17,4 +17,5 @@ public class CourseResponse {
     private Integer totalStudents = 0;
     private Boolean isPublished;
     private List<SectionResponse> sections;
+    private Boolean isEnrolled;
 }

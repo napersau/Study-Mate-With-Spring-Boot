@@ -46,16 +46,6 @@ public class OrderServiceImpl implements OrderService {
         order.setPayDate(Instant.now());
         orderRepository.save(order);
 
-        Order order1 = Order.builder()
-                .status("PAID")
-                .vnpTxnRef(vnpTxnRef)
-                .amount(order.getAmount())
-                .user(order.getUser())
-                .course(order.getCourse())
-                .payDate(Instant.now())
-                .createdDate(Instant.now())
-                .build();
-        orderRepository.save(order);
 
         // Bước 2: Cấp quyền truy cập khóa học cho User (Thêm vào bảng UserCourse)
         Enrollment enrollment = Enrollment.builder()

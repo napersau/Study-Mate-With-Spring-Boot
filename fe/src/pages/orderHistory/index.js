@@ -7,7 +7,7 @@ import {
 import paymentService from '../../service/paymentService';
 
 const STATUS_MAP = {
-    COMPLETED: {
+    PAID: {
         label: 'Thành công',
         color: 'text-green-700 dark:text-green-300',
         bg: 'bg-green-100 dark:bg-green-900/40',
@@ -138,7 +138,7 @@ const OrderHistory = () => {
                                 >
                                     {/* Top accent bar based on status */}
                                     <div className={`h-1 w-full ${
-                                        order.status === 'COMPLETED' ? 'bg-gradient-to-r from-green-400 to-emerald-500' :
+                                        order.status === 'PAID' ? 'bg-gradient-to-r from-green-400 to-emerald-500' :
                                         order.status === 'FAILED'    ? 'bg-gradient-to-r from-red-400 to-rose-500' :
                                         'bg-gradient-to-r from-yellow-400 to-amber-500'
                                     }`} />
