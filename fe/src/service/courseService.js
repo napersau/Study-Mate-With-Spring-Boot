@@ -44,12 +44,13 @@ const courseService = {
         }
     },
 
-    // Update khóa học (sẽ cần thêm API ở backend)
+    // Update khóa học
     updateCourse: async (id, courseData) => {
         try {
-            const response = await httpClient.put(`/courses/${id}`, courseData, {
+            const response = await httpClient.put(`/courses/update/${id}`, courseData, {
                 headers: {
                     Authorization: `Bearer ${getToken()}`,
+                    'Content-Type': 'application/json',
                 },
             });
             return response.data;

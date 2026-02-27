@@ -4,9 +4,10 @@ import lombok.Data;
 
 @Data
 public class LessonRequest {
+    private Long id;
     private String title;
     private Integer orderIndex;
-    private boolean isFree;
+    private Boolean isFree;
     private String type; // VIDEO, DOCUMENT, FLASHCARD, EXAM
 
     // Các field tùy chọn (chỉ gửi 1 trong các cái này)

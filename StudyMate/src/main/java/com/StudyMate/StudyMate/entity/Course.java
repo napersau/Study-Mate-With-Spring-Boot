@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -48,5 +49,5 @@ public class Course {
 
     // Quan hệ: 1 Khóa học có nhiều Chương
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-    private List<Section> sections;
+    private List<Section> sections = new ArrayList<>();
 }

@@ -67,7 +67,7 @@ public class CourseController {
     }
 
     @PutMapping("/update/{id}")
-    ApiResponse<CourseResponse> updateCourse(@PathVariable Long id, @RequestParam CourseRequest courseRequest) {
+    ApiResponse<CourseResponse> updateCourse(@PathVariable Long id, @RequestBody CourseRequest courseRequest) {
         CourseResponse response = courseService.updateCourse(id, courseRequest);
         return ApiResponse.<CourseResponse>builder()
                 .code(1000)

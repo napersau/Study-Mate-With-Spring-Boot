@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 @Entity
 @Data
 @Builder
@@ -25,7 +27,7 @@ public class Lesson {
     private Integer orderIndex; // Thứ tự bài (Bài 1, Bài 2...)
 
     @Column(name = "is_free")
-    private boolean isFree; // Học thử (Preview) được không?
+    private Boolean isFree; // Học thử (Preview) được không?
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
