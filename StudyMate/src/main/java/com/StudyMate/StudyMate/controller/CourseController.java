@@ -65,4 +65,14 @@ public class CourseController {
                 .message("Course deleted successfully")
                 .build();
     }
+
+    @PutMapping("/update/{id}")
+    ApiResponse<CourseResponse> updateCourse(@PathVariable Long id, @RequestParam CourseRequest courseRequest) {
+        CourseResponse response = courseService.updateCourse(id, courseRequest);
+        return ApiResponse.<CourseResponse>builder()
+                .code(1000)
+                .result(response)
+                .message("Course updated successfully")
+                .build();
+    }
 }

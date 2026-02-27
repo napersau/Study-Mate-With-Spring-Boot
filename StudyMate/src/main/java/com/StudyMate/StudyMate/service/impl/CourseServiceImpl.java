@@ -34,6 +34,7 @@ public class CourseServiceImpl implements CourseService {
                 .price(courseRequest.getPrice())
                 .level(courseRequest.getLevel())
                 .totalStudents(0)
+                .isPublished(false)
                 .build();
 
         courseRepository.save(course);
