@@ -18,6 +18,7 @@ import ExamList from "../pages/exams";
 import ExamDetail from "../pages/examDetail";
 import Courses from "../pages/courses";
 import CourseDetail from "../pages/courseDetail";
+import CourseLearn from "../pages/courseLearn";
 import CourseAdmin from "../pages/courseAdmin";
 import ExamAdmin from "../pages/examAdmin";
 import ProfilePage from "../pages/profile";
@@ -84,6 +85,13 @@ const Routes = [
           },
         ],
       },
+    ],
+  },
+  // ── Trang học full-screen (không có header/footer) ──
+  {
+    element: <PrivateRoutes />,
+    children: [
+      { path: "courses/:courseId/learn", element: <CourseLearn /> },
     ],
   },
 ];

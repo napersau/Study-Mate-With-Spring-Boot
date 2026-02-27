@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
     ArrowLeft, 
@@ -11,12 +11,41 @@ import {
     ShoppingCart,
     Loader2,
     Lock,
+    Video,
+    Clock,
+    ChevronDown,
+    ChevronUp,
+    Layers,
+    ClipboardList,
+    Unlock,
 } from 'lucide-react';
 import useStudyTimer from '../../hooks/useStudyTimer';
 import useCourseDetail from './useCourseDetail';
 
+// Map lesson type → icon + label
+const LESSON_TYPE_META = {
+    VIDEO:      { icon: Video,         label: 'Video' },
+    DOCUMENT:   { icon: FileText,      label: 'Tài liệu' },
+    FLASHCARD:  { icon: Layers,        label: 'Flashcard' },
+    EXAM:       { icon: ClipboardList, label: 'Bài kiểm tra' },
+};
+
+const getLessonMeta = (type) =>
+    LESSON_TYPE_META[type] || { icon: BookOpen, label: type || 'Bài học' };
+
+const formatDuration = (seconds) => {
+    if (!seconds) return null;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return m > 0 ? `${m}p ${s > 0 ? s + 'g' : ''}`.trim() : `${s}g`;
+};
+
 const CourseDetail = () => {
     const navigate = useNavigate();
+    const [openSections, setOpenSections] = useState({});
+
+    const toggleSection = (id) =>
+        setOpenSections(prev => ({ ...prev, [id]: !prev[id] }));
 
     // Tự động đếm thời gian học khóa học, gửi lên server khi rời trang
     useStudyTimer();
@@ -221,36 +250,121 @@ const CourseDetail = () => {
                     </div>
                 )}
 
-                {/* Sections List */}
+                {/* Sections & Lessons List */}
                 {course.sections && course.sections.length > 0 && (
                     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-10">
-                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3">
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-3">
                             <FileText className="w-8 h-8 text-purple-600" />
                             Chương trình học
                         </h2>
-                        <div className="space-y-4">
-                            {course.sections.map((section, index) => (
-                                <div 
-                                    key={section.id}
-                                    className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 p-6 rounded-xl border-l-4 border-purple-600 hover:shadow-lg transition-all duration-300"
-                                >
-                                    <div className="flex items-start gap-4">
-                                        <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full flex items-center justify-center font-bold">
-                                            {index + 1}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                                                {section.title}
-                                            </h3>
-                                            {section.description && (
-                                                <p className="text-gray-700 dark:text-gray-300">
-                                                    {section.description}
-                                                </p>
+                        <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">
+                            {course.sections.length} phần &bull;&nbsp;
+                            {course.sections.reduce((sum, s) => sum + (s.lessons?.length || 0), 0)} bài học
+                        </p>
+
+                        <div className="space-y-3">
+                            {course.sections
+                                .slice()
+                                .sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0))
+                                .map((section, index) => {
+                                    const isOpen = !!openSections[section.id];
+                                    const lessons = section.lessons
+                                        ? [...section.lessons].sort((a, b) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0))
+                                        : [];
+
+                                    return (
+                                        <div
+                                            key={section.id}
+                                            className="border border-purple-100 dark:border-gray-700 rounded-xl overflow-hidden"
+                                        >
+                                            {/* Section header — clickable to toggle */}
+                                            <button
+                                                onClick={() => toggleSection(section.id)}
+                                                className="w-full flex items-center gap-4 p-5 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-gray-700 dark:to-gray-800 hover:from-purple-100 hover:to-pink-100 dark:hover:from-gray-600 dark:hover:to-gray-700 transition-all duration-200 text-left"
+                                            >
+                                                <div className="flex-shrink-0 w-9 h-9 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                                                    {index + 1}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-bold text-gray-900 dark:text-white text-base leading-tight">
+                                                        {section.title}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                                        {lessons.length} bài học
+                                                    </p>
+                                                </div>
+                                                {isOpen
+                                                    ? <ChevronUp className="w-5 h-5 text-purple-500 flex-shrink-0" />
+                                                    : <ChevronDown className="w-5 h-5 text-purple-500 flex-shrink-0" />}
+                                            </button>
+
+                                            {/* Lessons list */}
+                                            {isOpen && (
+                                                <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                                                    {lessons.length === 0 ? (
+                                                        <p className="px-6 py-4 text-sm text-gray-400 dark:text-gray-500 italic">
+                                                            Chưa có bài học nào trong phần này.
+                                                        </p>
+                                                    ) : (
+                                                        lessons.map((lesson) => {
+                                                            const canAccess = isEnrolled || lesson.isFree;
+                                                            const meta = getLessonMeta(lesson.type);
+                                                            const Icon = meta.icon;
+                                                            const dur = formatDuration(lesson.duration);
+
+                                                            return (
+                                                                <div
+                                                                    key={lesson.id}
+                                                                    className={`flex items-center gap-4 px-6 py-4 transition-colors duration-150 ${
+                                                                        canAccess
+                                                                            ? 'hover:bg-purple-50 dark:hover:bg-gray-750 cursor-pointer'
+                                                                            : 'opacity-60 cursor-not-allowed'
+                                                                    }`}
+                                                                >
+                                                                    {/* Type icon */}
+                                                                    <div className={`flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center ${
+                                                                        canAccess
+                                                                            ? 'bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400'
+                                                                            : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
+                                                                    }`}>
+                                                                        <Icon className="w-4 h-4" />
+                                                                    </div>
+
+                                                                    {/* Title + meta */}
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <p className="font-medium text-gray-900 dark:text-white truncate text-sm">
+                                                                            {lesson.title}
+                                                                        </p>
+                                                                        <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                                                                            <span>{meta.label}</span>
+                                                                            {dur && (
+                                                                                <>
+                                                                                    <span>·</span>
+                                                                                    <span className="flex items-center gap-1">
+                                                                                        <Clock className="w-3 h-3" />{dur}
+                                                                                    </span>
+                                                                                </>
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
+
+                                                                    {/* Free / Lock badge */}
+                                                                    {lesson.isFree ? (
+                                                                        <span className="flex-shrink-0 flex items-center gap-1 text-xs font-semibold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 px-2 py-1 rounded-full">
+                                                                            <Unlock className="w-3 h-3" />Miễn phí
+                                                                        </span>
+                                                                    ) : !isEnrolled ? (
+                                                                        <Lock className="flex-shrink-0 w-4 h-4 text-gray-400" />
+                                                                    ) : null}
+                                                                </div>
+                                                            );
+                                                        })
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
-                                    </div>
-                                </div>
-                            ))}
+                                    );
+                                })}
                         </div>
                     </div>
                 )}

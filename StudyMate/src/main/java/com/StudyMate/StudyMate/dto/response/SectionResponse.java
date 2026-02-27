@@ -10,6 +10,5 @@ public class SectionResponse {
     private Long id;
     private String title;
     private Integer orderIndex;
-    private Course course;
     private List<LessonResponse> lessons;
 }
