@@ -14,7 +14,7 @@ public class FlashcardsProgressResponse {
     private Instant nextReviewAt;
     private String status;
     private Integer boxNumber;
-    private User user;
+    private UserResponse user;
 
     // SM2 fields
     private Double easinessFactor;

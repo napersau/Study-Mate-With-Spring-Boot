@@ -4,13 +4,9 @@ import com.StudyMate.StudyMate.dto.request.CourseRequest;
 import com.StudyMate.StudyMate.dto.request.LessonRequest;
 import com.StudyMate.StudyMate.dto.request.SectionRequest;
 import com.StudyMate.StudyMate.dto.response.CourseResponse;
-import com.StudyMate.StudyMate.entity.Course;
-import com.StudyMate.StudyMate.entity.Lesson;
-import com.StudyMate.StudyMate.entity.Section;
-import com.StudyMate.StudyMate.entity.User;
+import com.StudyMate.StudyMate.entity.*;
 import com.StudyMate.StudyMate.enums.LessonType;
-import com.StudyMate.StudyMate.repository.CourseRepository;
-import com.StudyMate.StudyMate.repository.EnrollmentRepository;
+import com.StudyMate.StudyMate.repository.*;
 import com.StudyMate.StudyMate.service.CourseService;
 import com.StudyMate.StudyMate.utils.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +28,9 @@ public class CourseServiceImpl implements CourseService {
     private final ModelMapper modelMapper;
     private final EnrollmentRepository enrollmentRepository;
     private final SecurityUtil securityUtil;
+    private final DocumentRepository documentRepository;
+    private final ExamRepository examRepository;
+    private final DecksRepository deckRepository;
 
     @Override
     public CourseResponse createCourse(CourseRequest courseRequest) {
@@ -187,12 +186,51 @@ public class CourseServiceImpl implements CourseService {
         lesson.setTitle(req.getTitle());
         lesson.setOrderIndex(req.getOrderIndex());
         lesson.setIsFree(req.getIsFree());
-        lesson.setType(LessonType.valueOf(req.getType()));
-        lesson.setVideoUrl(req.getVideoUrl());
-        lesson.setDuration(req.getDuration());
 
+        LessonType type = LessonType.valueOf(req.getType());
+        lesson.setType(type);
 
-        // Map thêm document, exam, deck tùy vào LessonType...
+        // 1. RESET TOÀN BỘ LIÊN KẾT CŨ (Dọn dẹp rác nếu chuyển Type)
+        lesson.setVideoUrl(null);
+        lesson.setDuration(null);
+        lesson.setDocument(null);
+        lesson.setDeck(null);
+        lesson.setExam(null);
+
+        // 2. MAP DỮ LIỆU MỚI THEO TỪNG TYPE
+        switch (type) {
+            case VIDEO:
+                lesson.setVideoUrl(req.getVideoUrl());
+                lesson.setDuration(req.getDuration());
+                break;
+
+            case DOCUMENT:
+                if (req.getDocumentId() != null) {
+                    Document doc = documentRepository.findById(req.getDocumentId())
+                            .orElseThrow(() -> new RuntimeException("Không tìm thấy Document ID: " + req.getDocumentId()));
+                    lesson.setDocument(doc); // Link với Lesson
+                }
+                break;
+
+            case EXAM:
+                if (req.getExamId() != null) {
+                    Exam exam = examRepository.findById(req.getExamId())
+                            .orElseThrow(() -> new RuntimeException("Không tìm thấy Exam ID: " + req.getExamId()));
+                    lesson.setExam(exam); // Link với Lesson
+                }
+                break;
+
+            case FLASHCARD:
+                if (req.getDeckId() != null) {
+                    Decks deck = deckRepository.findById(req.getDeckId())
+                            .orElseThrow(() -> new RuntimeException("Không tìm thấy Deck ID: " + req.getDeckId()));
+                    lesson.setDeck(deck); // Link với Lesson
+                }
+                break;
+
+            default:
+                throw new RuntimeException("Loại bài học không được hỗ trợ!");
+        }
     }
 
 
