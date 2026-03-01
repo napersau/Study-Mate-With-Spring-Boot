@@ -1,5 +1,6 @@
 import Home from "../pages/home";
 import Login from "../pages/login";
+import ForgotPassword from "../pages/forgotPassword";
 import Layout from "../layout";
 import AdminLayout from "../layout/AdminLayout";
 import PrivateRoutes from "../components/PrivateRoutes";
@@ -42,6 +43,10 @@ const Routes = [
       {
         path: "register",
         element: <Register />,
+      },
+      {
+        path: "forgot-password",
+        element: <ForgotPassword />,
       },
       {
         // VNPay redirect về URL này sau khi thanh toán

@@ -75,6 +75,8 @@ public class SecurityConfig {
 
                                 .requestMatchers("/api/v1/order/**").hasAnyRole("USER", "ADMIN")
 
+                                .requestMatchers("/api/v1/email/**").hasAnyRole("USER", "ADMIN")
+
                                 .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
