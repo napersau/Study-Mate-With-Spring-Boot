@@ -1,5 +1,6 @@
+import axios from "axios";
 import httpClient from "../config/httpClient";
-import { API } from "../config/configuration";
+import { API, CONFIG } from "../config/configuration";
 import { setToken, removeToken } from "./localStorageService";
 
 /**
@@ -47,4 +48,34 @@ export const register = async (userData) => {
 export const logOut = () => {
   removeToken();
   window.location.href = "/login";
+};
+
+/**
+ * Redirect browser to Spring Boot's Google OAuth2 endpoint
+ */
+export const redirectToGoogle = () => {
+  window.location.href = `${CONFIG.API_GATEWAY.replace("/api/v1", "")}/oauth2/authorization/google`;
+};
+
+/**
+ * Called after Spring Boot redirects back to /auth/signingoogle.
+ * Sends the session cookie so Spring can resolve the OAuth2 user and return a JWT.
+ */
+export const loginWithGoogle = async () => {
+  try {
+    const response = await axios.post(
+      `${CONFIG.API_GATEWAY}/auth/signingoogle`,
+      {},
+      { withCredentials: true }
+    );
+
+    if (response.data && response.data.result && response.data.result.token) {
+      setToken(response.data.result.token);
+    }
+
+    return response.data;
+  } catch (error) {
+    console.error("Error during Google login:", error);
+    throw error;
+  }
 };

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../service/authenticationService';
+import { login, redirectToGoogle } from '../../service/authenticationService';
 import { useAuth } from '../../context/AuthContext';
 
 const useLoginHook = () => {
@@ -51,6 +51,10 @@ const useLoginHook = () => {
     setShowPassword(!showPassword);
   };
 
+  const handleGoogleLogin = () => {
+    redirectToGoogle();
+  };
+
   return {
     formData,
     showPassword,
@@ -59,7 +63,8 @@ const useLoginHook = () => {
     loading,
     handleChange,
     handleSubmit,
-    togglePassword
+    togglePassword,
+    handleGoogleLogin
   };
 };
 

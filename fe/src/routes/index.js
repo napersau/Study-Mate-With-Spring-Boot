@@ -1,5 +1,6 @@
 import Home from "../pages/home";
 import Login from "../pages/login";
+import SignInGoogle from "../pages/signInGoogle";
 import ForgotPassword from "../pages/forgotPassword";
 import Layout from "../layout";
 import AdminLayout from "../layout/AdminLayout";
@@ -47,6 +48,10 @@ const Routes = [
       {
         path: "forgot-password",
         element: <ForgotPassword />,
+      },
+      {
+        path: "auth/signingoogle",
+        element: <SignInGoogle />,
       },
       {
         // VNPay redirect về URL này sau khi thanh toán

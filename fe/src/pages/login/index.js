@@ -11,7 +11,8 @@ const Login = () => {
     loading,
     handleChange,
     handleSubmit,
-    togglePassword
+    togglePassword,
+    handleGoogleLogin
   } = useLoginHook();
 
   return (
@@ -158,6 +159,7 @@ const Login = () => {
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
+                onClick={handleGoogleLogin}
                 className="flex items-center justify-center px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
