@@ -37,9 +37,6 @@ public class SecurityConfig {
     @Autowired
     private CustomJwtDecoder customJwtDecoder;
 
-    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/users","/api/v1/auth/**","/api/v1/users/**", "/api/v1/email/**", "/api/v1/ai/**"
-    ,"/oauth2/**","/login/oauth2/**"};
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -51,6 +48,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()  // Login
                                 .requestMatchers(HttpMethod.PUT, "/api/v1/email/**").permitAll()  // Reset password
                                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()  // OAuth
+                                .requestMatchers("/error").permitAll()
 
                                 // Protected endpoints - ĐẶT SAU
                                 .requestMatchers(HttpMethod.GET, "/api/v1/users").hasRole("ADMIN")  // Get all users
@@ -75,9 +73,9 @@ public class SecurityConfig {
 
                                 .requestMatchers("/api/v1/order/**").hasAnyRole("USER", "ADMIN")
 
-                                .requestMatchers("/api/v1/email/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/api/v1/email/**").permitAll()
 
-                                .anyRequest().authenticated())
+                        .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
                             response.sendRedirect("http://localhost:3000/auth/signingoogle");
