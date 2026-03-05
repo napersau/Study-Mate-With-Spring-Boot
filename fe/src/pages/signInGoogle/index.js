@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { loginWithGoogle } from '../../service/authenticationService';
 import { useAuth } from '../../context/AuthContext';
@@ -8,11 +8,29 @@ const SignInGoogle = () => {
   const { updateUserInfo } = useAuth();
   const [status, setStatus] = useState('loading'); // 'loading' | 'success' | 'error'
   const [errorMessage, setErrorMessage] = useState('');
+  const calledRef = useRef(false); // guard against React Strict Mode double-invoke
 
   useEffect(() => {
+    if (calledRef.current) return;
+    calledRef.current = true;
+
     const handleGoogleCallback = async () => {
+      // Log the full redirect URL so we can see what Spring Boot sends back
+      console.log("[SignInGoogle] callback URL:", window.location.href);
+      console.log("[SignInGoogle] query params:", window.location.search);
+      console.log("[SignInGoogle] hash:", window.location.hash);
+
+      // Support hash-based params (e.g. #token=... or #code=...)
+      const searchString =
+        window.location.search ||
+        (window.location.hash.startsWith('#?')
+          ? window.location.hash.slice(1)
+          : window.location.hash.startsWith('#')
+          ? '?' + window.location.hash.slice(1)
+          : '');
+
       try {
-        const response = await loginWithGoogle();
+        const response = await loginWithGoogle(searchString);
 
         if (response.code === 1000) {
           updateUserInfo();

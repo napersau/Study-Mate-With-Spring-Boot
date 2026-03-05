@@ -59,13 +59,39 @@ export const redirectToGoogle = () => {
 
 /**
  * Called after Spring Boot redirects back to /auth/signingoogle.
- * Sends the session cookie so Spring can resolve the OAuth2 user and return a JWT.
+ *
+ * Spring Boot's OAuth2 success handler typically embeds the JWT directly
+ * in the redirect URL as a query parameter, e.g.:
+ *   http://localhost:3000/auth/signingoogle?token=eyJhbGc...
+ *
+ * This function reads that token from the URL. If the token is not present
+ * in the URL (e.g. session-based flow), it falls back to a POST request
+ * to the backend.
+ *
+ * @param {string} [searchParams] - window.location.search from the callback page
+ * @returns {Promise<{code: number, result: {token: string}}>}
  */
-export const loginWithGoogle = async () => {
+export const loginWithGoogle = async (searchParams = "") => {
+  // --- Primary: token embedded in redirect URL ---
+  const params = new URLSearchParams(searchParams);
+  const token = params.get("token");
+  const code = params.get("code");  // Spring Boot may send an auth code instead
+
+  console.log("[loginWithGoogle] parsed token:", token);
+  console.log("[loginWithGoogle] parsed code:", code);
+
+  if (token) {
+    setToken(token);
+    // Return a shape consistent with the rest of the app
+    return { code: 1000, result: { token } };
+  }
+
+  // --- Fallback: session-cookie based exchange, optionally passing the code ---
   try {
+    const body = code ? { code } : {};
     const response = await axios.post(
       `${CONFIG.API_GATEWAY}/auth/signingoogle`,
-      {},
+      body,
       { withCredentials: true }
     );
 

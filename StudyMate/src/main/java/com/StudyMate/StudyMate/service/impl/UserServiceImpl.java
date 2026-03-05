@@ -111,6 +111,7 @@ public class UserServiceImpl implements UserService {
         user.setUsername(googleAccountDTO.getEmail());
         user.setPassword(passwordEncoder.encode(googleAccountDTO.getEmail()));
         user.setFullName(googleAccountDTO.getName());
+        user.setEmail(googleAccountDTO.getEmail());
         user.setRole(role);
         user.setActive(true);
         user.setGoogleAccountId(1);
